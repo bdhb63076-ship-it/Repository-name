@@ -128,8 +128,8 @@
         <div class="login-box">
             <h2>عبده يوتيوب 📺</h2>
             <p style="font-size:13px; color:#aaa; margin-top:8px;">اكتب اسمك للبدء (اكتب عبده لتكون الملك):</p>
-            <input type="text" id="username-input" placeholder="اسمك هنا..." onkeypress="if(event.key==='Enter') submitUserLogin()">
-            <button onclick="submitUserLogin()">دخول للتطبيق</button>
+            <input type="text" id="username-input" placeholder="اسمك هنا...">
+            <button id="login-btn">دخول للتطبيق</button>
         </div>
     </div>
 
@@ -148,16 +148,16 @@
     <!-- البحث -->
     <div class="search-overlay" id="search-overlay">
         <i class="fa-solid fa-arrow-right" onclick="closeSearch()"></i>
-        <input type="text" id="search-input" placeholder="ابحث في عبده يوتيوب..." onkeypress="if(event.key==='Enter') executeSearch()">
+        <input type="text" id="search-input" placeholder="ابحث في عبده يوتيوب...">
         <i class="fa-solid fa-magnifying-glass" onclick="executeSearch()"></i>
     </div>
 
     <!-- الأقسام -->
     <div class="chips-container">
-        <button class="chip active" onclick="filterCat('الكل')">كل المحتوى</button>
-        <button class="chip" onclick="filterCat('ألعاب فيديو')">ألعاب فيديو</button>
-        <button class="chip" onclick="filterCat('كرة القدم')">كرة القدم</button>
-        <button class="chip" onclick="filterCat('موسيقى')">موسيقى</button>
+        <button class="chip active" onclick="filterCat('الكل', event)">كل المحتوى</button>
+        <button class="chip" onclick="filterCat('ألعاب فيديو', event)">ألعاب فيديو</button>
+        <button class="chip" onclick="filterCat('كرة القدم', event)">كرة القدم</button>
+        <button class="chip" onclick="filterCat('موسيقى', event)">موسيقى</button>
     </div>
 
     <!-- المحتوى -->
@@ -181,8 +181,8 @@
                 <h3><i class="fa-solid fa-comments"></i> دردشة عبده يوتيوب</h3>
                 <div class="chat-box" id="chat-messages-box"></div>
                 <div class="chat-inputs">
-                    <input type="text" id="chat-input-msg" placeholder="اكتب رسالة..." onkeypress="if(event.key==='Enter') sendChatMessage()">
-                    <button onclick="sendChatMessage()">إرسال</button>
+                    <input type="text" id="chat-input-msg" placeholder="اكتب رسالة...">
+                    <button id="chat-send-btn">إرسال</button>
                 </div>
             </div>
         </div>
@@ -192,7 +192,7 @@
             <h2><i class="fa-solid fa-cloud-arrow-up"></i> نشر فيديو جديد في قناتك</h2>
             <p style="color:var(--secondary-text); margin: 10px 0 20px 0;">اكتب عنوان الفيديو لنشره فوراً:</p>
             <input type="text" id="custom-video-title" placeholder="عنوان الفيديو..." style="width:100%; padding:12px; background:#121212; border:1px solid var(--border-color); border-radius:8px; color:#fff; margin-bottom:15px; outline:none;">
-            <button onclick="uploadMyVideo()" style="width:100%; padding:12px; background:var(--yt-red); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">نشر الفيديو الآن</button>
+            <button id="upload-btn" style="width:100%; padding:12px; background:var(--yt-red); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">نشر الفيديو الآن</button>
         </div>
 
         <!-- البروفايل -->
@@ -228,7 +228,7 @@
             <p id="watch-channel" style="color:var(--secondary-text); font-size: 13px; margin-top: 4px;"></p>
             <div style="display:flex; gap:12px; margin-top:15px;">
                 <button onclick="alert('تم الإعجاب!')" style="background:#222; border:none; color:#fff; padding:8px 16px; border-radius:18px; cursor:pointer;"><i class="fa-solid fa-thumbs-up"></i> إعجاب</button>
-                <button id="sub-toggle-btn" onclick="toggleSubscribe()" style="background:#fff; border:none; color:#000; padding:8px 16px; border-radius:18px; font-weight:bold; cursor:pointer;">متابعة</button>
+                <button id="sub-toggle-btn" style="background:#fff; border:none; color:#000; padding:8px 16px; border-radius:18px; font-weight:bold; cursor:pointer;">متابعة</button>
             </div>
         </div>
     </div>
@@ -262,12 +262,32 @@
             fetchRealVideos('trending');
             renderLiveStreams();
             loadChatMessages();
+            initEventListeners();
         };
+
+        function initEventListeners() {
+            // ربط زر الدخول بشكل مباشر وبرمجي آمن
+            document.getElementById('login-btn').addEventListener('click', submitUserLogin);
+            document.getElementById('username-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') submitUserLogin();
+            });
+
+            // ربط الشات والبحث والرفع
+            document.getElementById('chat-send-btn').addEventListener('click', sendChatMessage);
+            document.getElementById('chat-input-msg').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendChatMessage();
+            });
+            document.getElementById('upload-btn').addEventListener('click', uploadMyVideo);
+            document.getElementById('sub-toggle-btn').addEventListener('click', toggleSubscribe);
+            document.getElementById('search-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') executeSearch();
+            });
+        }
 
         function submitUserLogin() {
             let inputField = document.getElementById('username-input');
             let input = inputField.value.trim();
-            if (!input) input = "عبده"; // افتراضي لو تركها فارغة
+            if (!input) input = "عبده"; 
             localStorage.setItem('abdo_tube_user', input);
             document.getElementById('login-modal').style.display = 'none';
             applyUserRole(input);
@@ -349,19 +369,4 @@
             liveStreams.forEach(stream => {
                 let card = document.createElement('div');
                 card.className = 'live-stream-card';
-                card.onclick = () => openWatch(stream.id, stream.title, stream.channel);
-                card.innerHTML = `
-                    <div class="thumbnail-box">
-                        <img src="https://i.ytimg.com/vi/${stream.id}/hqdefault.jpg">
-                        <div class="live-badge"><i class="fa-solid fa-circle" style="font-size:7px;"></i> مباشر الآن</div>
-                    </div>
-                    <div class="video-info-box">
-                        <div class="channel-avatar" style="background:#ff0000;">🔴</div>
-                        <div>
-                            <div class="video-title">${stream.title}</div>
-                            <div class="sub-meta">${stream.channel} • ${stream.viewers}</div>
-                        </div>
-                    </div>
-                `;
-                list.appendChild(card);
-        
+                card.onclick = (
