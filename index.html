@@ -235,11 +235,11 @@
 
     <!-- الشريط السفلي -->
     <nav class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('home')"><i class="fa-solid fa-house"></i><span>الرئيسية</span></button>
-        <button class="nav-item" onclick="switchTab('live')"><i class="fa-solid fa-tower-broadcast"></i><span>اللايفات</span></button>
-        <button class="nav-item" onclick="switchTab('chat')"><i class="fa-solid fa-comments"></i><span>دردشة</span></button>
-        <button class="nav-item" onclick="switchTab('upload')"><i class="fa-solid fa-plus-circle"></i><span>إنشاء</span></button>
-        <button class="nav-item" onclick="switchTab('profile')"><i class="fa-solid fa-user"></i><span>أنت</span></button>
+        <button class="nav-item active" onclick="switchTab('home', event)"><i class="fa-solid fa-house"></i><span>الرئيسية</span></button>
+        <button class="nav-item" onclick="switchTab('live', event)"><i class="fa-solid fa-tower-broadcast"></i><span>اللايفات</span></button>
+        <button class="nav-item" onclick="switchTab('chat', event)"><i class="fa-solid fa-comments"></i><span>دردشة</span></button>
+        <button class="nav-item" onclick="switchTab('upload', event)"><i class="fa-solid fa-plus-circle"></i><span>إنشاء</span></button>
+        <button class="nav-item" onclick="switchTab('profile', event)"><i class="fa-solid fa-user"></i><span>أنت</span></button>
     </nav>
 
     <script>
@@ -265,8 +265,9 @@
         };
 
         function submitUserLogin() {
-            let input = document.getElementById('username-input').value.trim();
-            if (!input) input = "زائر كريم";
+            let inputField = document.getElementById('username-input');
+            let input = inputField.value.trim();
+            if (!input) input = "عبده"; // افتراضي لو تركها فارغة
             localStorage.setItem('abdo_tube_user', input);
             document.getElementById('login-modal').style.display = 'none';
             applyUserRole(input);
@@ -363,8 +364,4 @@
                     </div>
                 `;
                 list.appendChild(card);
-            });
-        }
-
-        function switchTab(tabId) {
-            document.querySelector
+        
