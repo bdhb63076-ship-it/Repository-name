@@ -1,372 +1,475 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>عبده يوتيوب - Abdo Tube</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --bg-color: #0f0f0f;
-            --text-color: #ffffff;
-            --secondary-text: #aaaaaa;
-            --yt-red: #ff0000;
-            --border-color: #272727;
-            --card-bg: #1f1f1f;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-color); color: var(--text-color); padding-top: 96px; padding-bottom: 60px; }
-
-        /* الهيدر العلوي */
-        header {
-            position: fixed; top: 0; left: 0; right: 0; height: 48px;
-            background-color: var(--bg-color); display: flex; align-items: center; justify-content: space-between;
-            padding: 0 16px; z-index: 1000; border-bottom: 1px solid var(--border-color);
-        }
-        .logo-area { display: flex; align-items: center; gap: 6px; font-size: 19px; font-weight: bold; cursor: pointer; color: #fff; }
-        .logo-area i { color: var(--yt-red); font-size: 24px; }
-        .header-icons { display: flex; align-items: center; gap: 18px; font-size: 18px; cursor: pointer; color: #fff; }
-
-        /* نافذة تسجيل الاسم الإجبارية */
-        .login-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0, 0, 0, 0.96);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 9999; padding: 20px;
-        }
-        .login-box {
-            background-color: #1f1f1f; padding: 24px; border-radius: 16px;
-            width: 100%; max-width: 320px; text-align: center; border: 1px solid var(--border-color);
-        }
-        .login-box input {
-            width: 100%; padding: 12px; background: #121212; border: 1px solid var(--border-color);
-            border-radius: 8px; color: #fff; font-size: 15px; margin: 15px 0; outline: none; text-align: center;
-        }
-        .login-box button {
-            width: 100%; padding: 12px; background-color: var(--yt-red); color: white;
-            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px;
-        }
-
-        /* شريط الأقسام */
-        .chips-container {
-            position: fixed; top: 48px; left: 0; right: 0; height: 48px;
-            background-color: var(--bg-color); display: flex; align-items: center; gap: 8px;
-            padding: 0 12px; overflow-x: auto; white-space: nowrap; z-index: 999;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .chip { background-color: var(--card-bg); color: var(--text-color); padding: 6px 12px; border-radius: 8px; font-size: 13px; border: none; cursor: pointer; }
-        .chip.active { background-color: #fff; color: #000; font-weight: bold; }
-
-        /* شريط البحث */
-        .search-overlay {
-            position: fixed; top: 0; left: 0; right: 0; height: 48px;
-            background-color: var(--bg-color); display: none; align-items: center;
-            padding: 0 12px; gap: 12px; z-index: 1001;
-        }
-        .search-overlay.active { display: flex; }
-        .search-overlay input {
-            flex: 1; height: 36px; background-color: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 18px; padding: 0 16px; color: #fff; font-size: 15px; outline: none;
-        }
-
-        /* شبكة الفيديوهات */
-        .feed { display: flex; flex-direction: column; gap: 16px; }
-        .video-card { display: flex; flex-direction: column; width: 100%; cursor: pointer; }
-        .thumbnail-box { position: relative; width: 100%; aspect-ratio: 16/9; background-color: #1a1a1a; overflow: hidden; }
-        .thumbnail-box img { width: 100%; height: 100%; object-fit: cover; }
-        .live-badge {
-            position: absolute; top: 8px; left: 8px; background: #ff0000; color: #fff;
-            font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: bold; display: flex; align-items: center; gap: 4px;
-        }
-        .video-info-box { display: flex; padding: 12px; gap: 12px; }
-        .channel-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--yt-red); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold; }
-        .video-title { font-size: 14px; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .sub-meta { font-size: 12px; color: var(--secondary-text); margin-top: 4px; }
-
-        /* قسم اللايفات المباشرة */
-        .live-container { padding: 16px; display: flex; flex-direction: column; gap: 15px; }
-        .live-stream-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; cursor: pointer; }
-
-        /* الدردشة الجماعية */
-        .chat-container { display: flex; flex-direction: column; height: calc(100vh - 160px); padding: 12px; }
-        .chat-box { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .chat-msg { background: var(--card-bg); padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border-color); }
-        .chat-msg .name { font-size: 12px; color: #3ea6ff; font-weight: bold; }
-        .chat-msg .txt { font-size: 14px; margin-top: 2px; }
-        .chat-inputs { display: flex; gap: 8px; margin-top: 10px; }
-        .chat-inputs input { flex: 1; padding: 12px; background: #121212; border: 1px solid var(--border-color); border-radius: 8px; color: #fff; outline: none; }
-        .chat-inputs button { background: var(--yt-red); color: #fff; border: none; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-
-        /* الشريط السفلي */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0; height: 56px;
-            background-color: var(--bg-color); border-top: 1px solid var(--border-color);
-            display: flex; justify-content: space-around; align-items: center; z-index: 1000;
-        }
-        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; background: none; border: none; font-size: 10px; color: var(--secondary-text); cursor: pointer; flex: 1; }
-        .nav-item i { font-size: 20px; }
-        .nav-item.active { color: #fff; font-weight: bold; }
-
-        /* مشغل الفيديو واللايف */
-        #watch-view {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: var(--bg-color); z-index: 2000; display: none; flex-direction: column; overflow-y: auto;
-        }
-        .watch-header { height: 48px; display: flex; align-items: center; padding: 0 16px; gap: 16px; border-bottom: 1px solid var(--border-color); }
-        .player-container { width: 100%; aspect-ratio: 16/9; background-color: #000; }
-        .player-container iframe { width: 100%; height: 100%; border: none; }
-
-        .page { display: none; }
-        .page.active { display: block; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دولة الأورشاليم المستقلة | المنصة الرقمية</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script>
+tailwind.config={
+theme:{extend:{colors:{
+gold:'#D4AF37',royal:'#1E3A8A',darkBg:'#0F172A',
+cardBg:'#1E293B',accent:'#3B82F6'
+},fontFamily:{cairo:['Cairo','sans-serif']}}}
+}
+</script>
+<style>
+body{font-family:'Cairo',sans-serif;background:#0F172A;color:#F8FAFC}
+.gold-border{border-color:#D4AF37}
+.gold-text{color:#D4AF37}
+.gold-bg{background:#D4AF37}
+.glass-panel{background:rgba(30,41,59,.7);backdrop-filter:blur(10px);border:1px solid rgba(212,175,55,.2)}
+button:disabled{opacity:.45;cursor:not-allowed}
+</style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
 
-    <!-- نافذة تسجيل الاسم الإجبارية -->
-    <div class="login-overlay" id="login-modal">
-        <div class="login-box">
-            <h2>عبده يوتيوب 📺</h2>
-            <p style="font-size:13px; color:#aaa; margin-top:8px;">اكتب اسمك للبدء (اكتب عبده لتكون الملك):</p>
-            <input type="text" id="username-input" placeholder="اسمك هنا...">
-            <button id="login-btn">دخول للتطبيق</button>
-        </div>
-    </div>
+<nav class="glass-panel sticky top-0 z-50 px-4 md:px-6 py-4 flex justify-between items-center shadow-lg">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full gold-bg flex items-center justify-center text-slate-900 text-xl">🏛️</div>
+<div>
+<h1 class="text-lg font-bold">دولة الأورشاليم المستقلة</h1>
+<p class="text-xs text-slate-400">شارع متاح للجميع بلا حدود</p>
+</div>
+</div>
+<div id="authSection" class="flex items-center gap-2"></div>
+</nav>
 
-    <!-- الهيدر -->
-    <header>
-        <div class="logo-area" onclick="switchTab('home')">
-            <i class="fa-brands fa-youtube"></i>
-            <span>عبده يوتيوب</span>
-        </div>
-        <div class="header-icons">
-            <i class="fa-solid fa-magnifying-glass" onclick="openSearch()"></i>
-            <i class="fa-solid fa-user-pen" onclick="logoutUser()" title="تغيير الاسم" style="font-size:15px; color:#aaa;"></i>
-        </div>
-    </header>
+<header class="relative py-16 px-6 text-center border-b border-slate-800">
+<div class="max-w-4xl mx-auto">
+<span class="inline-block px-4 py-1 rounded-full text-xs font-semibold gold-bg text-slate-900 mb-4">
+نظام الإدارة الجماعية • 4 وزارات فقط
+</span>
+<h2 class="text-4xl md:text-6xl font-black mb-4 gold-text">مجتمع مستقل.. مفتوح للجميع</h2>
+<p class="text-lg text-slate-300 max-w-2xl mx-auto">
+مرحباً بكم في منصة الشارع. لا وجود لرئيس، لا وجود للحدود المغلقة. الإدارة تتجدد شهرياً بالانتخاب المباشر بين أفراد الشارع.
+</p>
+</div>
+</header>
 
-    <!-- البحث -->
-    <div class="search-overlay" id="search-overlay">
-        <i class="fa-solid fa-arrow-right" onclick="closeSearch()"></i>
-        <input type="text" id="search-input" placeholder="ابحث في عبده يوتيوب...">
-        <i class="fa-solid fa-magnifying-glass" onclick="executeSearch()"></i>
-    </div>
+<section class="py-12 px-6 max-w-6xl mx-auto w-full">
+<h3 class="text-2xl font-bold mb-6"><i class="fa-solid fa-road gold-text"></i> خريطة الشارع (من أوله لآخره)</h3>
+<div class="glass-panel p-6 rounded-2xl">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<button onclick="selectStreetPoint('بداية الشارع','مدخل الشارع الرئيسي، مفتوح بالكامل للجميع بدون أي بوابات أو قيود.')" class="p-4 rounded-xl bg-slate-800 text-right border border-slate-700">
+<div class="gold-text font-bold mb-1">🚪 أول الشارع</div>
+<div class="text-xs text-slate-300">المدخل المفتوح والمرحّب</div>
+</button>
+<button onclick="selectStreetPoint('وسط الشارع (الميدان)','الميدان الرئيسي والتجمع التجاري والخدماتي لأهالي الشارع.')" class="p-4 rounded-xl bg-slate-800 text-right border border-slate-700">
+<div class="gold-text font-bold mb-1">🏪 وسط الشارع</div>
+<div class="text-xs text-slate-300">الميدان والخدمات العامة</div>
+</button>
+<button onclick="selectStreetPoint('المنطقة السكنية','قلب الشارع حيث منازل الأهالي والمساحات المشتركة.')" class="p-4 rounded-xl bg-slate-800 text-right border border-slate-700">
+<div class="gold-text font-bold mb-1">🏠 المربع السكني</div>
+<div class="text-xs text-slate-300">منازل الجيران والتكافل</div>
+</button>
+<button onclick="selectStreetPoint('نهاية الشارع المفتوحة','نهاية الشارع المتصلة بالمناطق المجاورة بلا حواجز.')" class="p-4 rounded-xl bg-slate-800 text-right border border-slate-700">
+<div class="gold-text font-bold mb-1">♾️ آخر الشارع</div>
+<div class="text-xs text-slate-300">الامتداد المفتوح</div>
+</button>
+</div>
+<div id="streetPointDetails" class="mt-6 p-4 rounded-xl bg-slate-900 border border-slate-700 text-sm text-slate-300">
+<span class="gold-text font-bold">معلومات القطاع:</span> اضغط على أي جزء من الشارع.
+</div>
+</div>
+</section>
 
-    <!-- الأقسام -->
-    <div class="chips-container">
-        <button class="chip active" onclick="filterCat('الكل', event)">كل المحتوى</button>
-        <button class="chip" onclick="filterCat('ألعاب فيديو', event)">ألعاب فيديو</button>
-        <button class="chip" onclick="filterCat('كرة القدم', event)">كرة القدم</button>
-        <button class="chip" onclick="filterCat('موسيقى', event)">موسيقى</button>
-    </div>
+<section class="py-10 px-6 max-w-6xl mx-auto w-full">
+<h3 class="text-2xl font-bold mb-6"><i class="fa-solid fa-user-tie gold-text"></i> الوزراء الحاليون لهذا الشهر</h3>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="glass-panel p-5 rounded-xl text-center border-t-4 border-emerald-500">
+<i class="fa-solid fa-leaf text-3xl text-emerald-400 mb-3"></i>
+<h4 class="font-bold mb-1">وزارة البيئة والخدمات</h4>
+<p class="text-xs gold-text mb-3">الوزير الحالي: <span id="min1">أحمد محمود</span></p>
+<p class="text-xs text-slate-400">مسؤول الإضاءة والنظافة والتشجير</p>
+</div>
+<div class="glass-panel p-5 rounded-xl text-center border-t-4 border-rose-500">
+<i class="fa-solid fa-hand-holding-heart text-3xl text-rose-400 mb-3"></i>
+<h4 class="font-bold mb-1">وزارة التكافل الاجتماعي</h4>
+<p class="text-xs gold-text mb-3">الوزير الحالي: <span id="min2">سارة حسن</span></p>
+<p class="text-xs text-slate-400">مسؤولة الدعم والفعاليات الخيرية</p>
+</div>
+<div class="glass-panel p-5 rounded-xl text-center border-t-4 border-amber-500">
+<i class="fa-solid fa-volleyball-ball text-3xl text-amber-400 mb-3"></i>
+<h4 class="font-bold mb-1">وزارة الأنشطة والتعاون</h4>
+<p class="text-xs gold-text mb-3">الوزير الحالي: <span id="min3">محمود علي</span></p>
+<p class="text-xs text-slate-400">مسؤول الدورات الرياضية والمناسبات</p>
+</div>
+<div class="glass-panel p-5 rounded-xl text-center border-t-4 border-cyan-500">
+<i class="fa-solid fa-laptop-code text-3xl text-cyan-400 mb-3"></i>
+<h4 class="font-bold mb-1">وزارة الإعلام والتطوير</h4>
+<p class="text-xs gold-text mb-3">الوزير الحالي: <span id="min4">عبده (مطور المنصة)</span></p>
+<p class="text-xs text-slate-400">مسؤول الموقع والإعلانات</p>
+</div>
+</div>
+</section>
 
-    <!-- المحتوى -->
-    <main>
-        <!-- الرئيسية -->
-        <div id="home-page" class="page active">
-            <div class="feed" id="video-feed"></div>
-        </div>
+<section class="py-12 px-6 max-w-6xl mx-auto w-full">
+<div class="glass-panel p-8 rounded-2xl">
+<div class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-slate-700 pb-6 gap-4">
+<div>
+<h3 class="text-2xl font-bold gold-text mb-1">🗳️ نظام الانتخابات الشهرية</h3>
+<p class="text-sm text-slate-300">التصويت مفتوح لمدة 24 ساعة فقط.</p>
+</div>
+<div class="text-center bg-slate-900 px-6 py-3 rounded-xl border gold-border">
+<div class="text-xs text-slate-400 mb-1">الوقت المتبقي لغلق التصويت:</div>
+<div id="electionTimer" class="text-2xl font-black gold-text">23:59:59</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<div class="bg-slate-900/60 p-6 rounded-xl border border-slate-700">
+<h4 class="font-bold mb-4 text-lg">📝 الترشح لأحد الوزارات</h4>
+<form id="candidateForm" class="space-y-4">
+<div>
+<label class="block text-xs text-slate-400 mb-1">اسم المرشح</label>
+<input type="text" id="candNameInput" readonly required placeholder="سجل دخولك أولاً" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm">
+</div>
+<div>
+<label class="block text-xs text-slate-400 mb-1">اختر الوزارة</label>
+<select id="candMinistry" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm text-white">
+<option value="وزارة البيئة والخدمات">وزارة البيئة والخدمات</option>
+<option value="وزارة التكافل الاجتماعي">وزارة التكافل الاجتماعي</option>
+<option value="وزارة الأنشطة والتعاون">وزارة الأنشطة والتعاون</option>
+<option value="وزارة الإعلام والتطوير">وزارة الإعلام والتطوير</option>
+</select>
+</div>
+<div>
+<label class="block text-xs text-slate-400 mb-1">برنامجك/فكرتك للشارع</label>
+<textarea id="candProgram" rows="3" required placeholder="ما الذي ستقدمه للشارع؟" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm"></textarea>
+</div>
+<button type="submit" class="w-full gold-bg text-slate-900 font-bold py-3 rounded-lg">تأكيد الترشح 🚀</button>
+</form>
+</div>
+<div>
+<h4 class="font-bold mb-4 text-lg">📊 قائمة المرشحين للتصويت</h4>
+<div id="candidatesList" class="space-y-4 max-h-[380px] overflow-y-auto pr-2"></div>
+</div>
+</div>
+</div>
+</section>
 
-        <!-- قسم البثوث المباشرة -->
-        <div id="live-page" class="page">
-            <div class="live-container">
-                <h2 style="color: #ff0000;"><i class="fa-solid fa-tower-broadcast"></i> بثوث الاستريمرز المباشرة الآن</h2>
-                <div id="live-streams-list"></div>
-            </div>
-        </div>
+<section class="py-12 px-6 max-w-6xl mx-auto w-full">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="glass-panel p-6 rounded-xl">
+<h3 class="text-xl font-bold mb-4 gold-text"><i class="fa-solid fa-triangle-exclamation"></i> إبلاغ عن مشكلة في الشارع</h3>
+<form id="reportForm" class="space-y-4">
+<div>
+<label class="block text-xs text-slate-400 mb-1">مكان المشكلة</label>
+<select id="reportLocation" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm text-white">
+<option>أول الشارع</option><option>منتصف الشارع</option><option>آخر الشارع</option>
+</select>
+</div>
+<div>
+<label class="block text-xs text-slate-400 mb-1">الوزارة المختصة</label>
+<select id="reportMinistry" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm text-white">
+<option>وزارة البيئة والخدمات</option>
+<option>وزارة التكافل الاجتماعي</option>
+<option>وزارة الأنشطة والتعاون</option>
+<option>وزارة الإعلام والتطوير</option>
+</select>
+</div>
+<div>
+<label class="block text-xs text-slate-400 mb-1">تفاصيل المشكلة</label>
+<textarea id="reportDetails" rows="3" required placeholder="اشرح المشكلة..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm"></textarea>
+</div>
+<button type="submit" class="w-full bg-blue-600 font-bold py-3 rounded-lg">إرسال البلاغ للوزارة المختصة 📢</button>
+</form>
+</div>
+<div class="glass-panel p-6 rounded-xl">
+<h3 class="text-xl font-bold mb-4">📋 متابعة بلاغات الشارع الحالية</h3>
+<div id="reportsFeed" class="space-y-3 max-h-[350px] overflow-y-auto"></div>
+</div>
+</div>
+</section>
 
-        <!-- الشات الجماعي -->
-        <div id="chat-page" class="page">
-            <div class="chat-container">
-                <h3><i class="fa-solid fa-comments"></i> دردشة عبده يوتيوب</h3>
-                <div class="chat-box" id="chat-messages-box"></div>
-                <div class="chat-inputs">
-                    <input type="text" id="chat-input-msg" placeholder="اكتب رسالة...">
-                    <button id="chat-send-btn">إرسال</button>
-                </div>
-            </div>
-        </div>
+<section class="py-12 px-6 max-w-4xl mx-auto w-full">
+<h3 class="text-2xl font-bold text-center mb-8 gold-text">❓ الأسئلة الشائعة حول المشروع</h3>
+<div class="space-y-4">
+<div class="glass-panel p-4 rounded-xl"><h4 class="font-bold mb-2">كيف تعمل الدولة بدون رئيس؟</h4><p class="text-sm text-slate-300">تدار الدولة عبر 4 وزارات فقط، يمثل كل وزارة مواطن منتخب شهرياً من أهالي الشارع للقيام بالمهام الخدمية والاجتماعية.</p></div>
+<div class="glass-panel p-4 rounded-xl"><h4 class="font-bold mb-2">هل هناك حدود جغرافية أو قيود للدخول؟</h4><p class="text-sm text-slate-300">لا، الشارع مفتوح تماماً للجميع بدون أسوار أو بوابات.</p></div>
+<div class="glass-panel p-4 rounded-xl"><h4 class="font-bold mb-2">كيف يتم حفظ تسجيل الدخول؟</h4><p class="text-sm text-slate-300">يقوم الموقع بحفظ اسمك تلقائياً على جهازك.</p></div>
+</div>
+</section>
 
-        <!-- رفع ونشر فيديو جديد -->
-        <div id="upload-page" class="page" style="padding: 20px;">
-            <h2><i class="fa-solid fa-cloud-arrow-up"></i> نشر فيديو جديد في قناتك</h2>
-            <p style="color:var(--secondary-text); margin: 10px 0 20px 0;">اكتب عنوان الفيديو لنشره فوراً:</p>
-            <input type="text" id="custom-video-title" placeholder="عنوان الفيديو..." style="width:100%; padding:12px; background:#121212; border:1px solid var(--border-color); border-radius:8px; color:#fff; margin-bottom:15px; outline:none;">
-            <button id="upload-btn" style="width:100%; padding:12px; background:var(--yt-red); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">نشر الفيديو الآن</button>
-        </div>
+<footer class="mt-auto py-6 text-center text-xs text-slate-500 border-t border-slate-800">
+دولة الأورشاليم المستقلة • منصة الشارع المفتوحة • تصميم وتطوير عبده
+</footer>
 
-        <!-- البروفايل -->
-        <div id="profile-page" class="page" style="padding: 20px;">
-            <div style="display:flex; align-items:center; gap:15px;">
-                <div id="profile-avatar-box" style="width:64px; height:64px; border-radius:50%; background:#333; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:bold; position:relative; color:#fff;">
-                    <i class="fa-solid fa-crown" id="owner-crown" style="position:absolute; top:-12px; color:#FFD700; font-size:22px; display:none;"></i>
-                    <span id="avatar-letter">A</span>
-                </div>
-                <div>
-                    <h2 id="display-user-name">زائر</h2>
-                    <p id="badge-container" style="color:#aaa; font-size:13px; margin-top:4px;">مشترك في عبده يوتيوب</p>
-                </div>
-            </div>
-            <div id="owner-panel" style="margin-top:20px; background:#1f1f1f; border:1px solid #FFD700; border-radius:12px; padding:16px; display:none;">
-                <h3 style="color:#FFD700;"><i class="fa-solid fa-star"></i> لوحة تحكم المالك الملكي (عبده)</h3>
-                <p style="font-size:13px; color:#ddd; margin-top:6px;">👑 التاج الملكي وصلاحيات التوثيق مفعلة بالكامل.</p>
-            </div>
-        </div>
-    </main>
+<script>
+// مفاتيح التخزين
+const KEYS={
+user:'orshalim_user',
+candidates:'orshalim_candidates',
+reports:'orshalim_reports',
+votes:'orshalim_votes',
+timer:'orshalim_election_end',
+ministers:'orshalim_ministers'
+};
 
-    <!-- مشغل الفيديو -->
-    <div id="watch-view">
-        <div class="watch-header">
-            <i class="fa-solid fa-arrow-right" onclick="closeWatch()" style="font-size:20px; cursor:pointer;"></i>
-            <span>تشغيل المحتوى المباشر</span>
-        </div>
-        <div class="player-container">
-            <iframe id="youtube-player" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
-        <div style="padding: 16px;">
-            <h2 id="watch-title" style="font-size: 15px; line-height: 1.4;"></h2>
-            <p id="watch-channel" style="color:var(--secondary-text); font-size: 13px; margin-top: 4px;"></p>
-            <div style="display:flex; gap:12px; margin-top:15px;">
-                <button onclick="alert('تم الإعجاب!')" style="background:#222; border:none; color:#fff; padding:8px 16px; border-radius:18px; cursor:pointer;"><i class="fa-solid fa-thumbs-up"></i> إعجاب</button>
-                <button id="sub-toggle-btn" style="background:#fff; border:none; color:#000; padding:8px 16px; border-radius:18px; font-weight:bold; cursor:pointer;">متابعة</button>
-            </div>
-        </div>
-    </div>
+function load(key,fallback){
+try{
+const value=localStorage.getItem(key);
+return value===null?fallback:JSON.parse(value);
+}catch(e){return fallback}
+}
+function save(key,value){
+localStorage.setItem(key,JSON.stringify(value));
+}
 
-    <!-- الشريط السفلي -->
-    <nav class="bottom-nav">
-        <button class="nav-item active" onclick="switchTab('home', event)"><i class="fa-solid fa-house"></i><span>الرئيسية</span></button>
-        <button class="nav-item" onclick="switchTab('live', event)"><i class="fa-solid fa-tower-broadcast"></i><span>اللايفات</span></button>
-        <button class="nav-item" onclick="switchTab('chat', event)"><i class="fa-solid fa-comments"></i><span>دردشة</span></button>
-        <button class="nav-item" onclick="switchTab('upload', event)"><i class="fa-solid fa-plus-circle"></i><span>إنشاء</span></button>
-        <button class="nav-item" onclick="switchTab('profile', event)"><i class="fa-solid fa-user"></i><span>أنت</span></button>
-    </nav>
+let currentUser=localStorage.getItem(KEYS.user)||null;
+let candidates=load(KEYS.candidates,[
+{id:1,name:'محمد صابر',ministry:'وزارة البيئة والخدمات',program:'تركيب كشافات ليد إضافية في منتصف الشارع',votes:12},
+{id:2,name:'خالد عبد السلام',ministry:'وزارة التكافل الاجتماعي',program:'توفير صندوق تكافل لمساعدة الأسر المستحقة',votes:19}
+]);
+let reports=load(KEYS.reports,[
+{id:1,location:'أول الشارع',ministry:'وزارة البيئة والخدمات',details:'عطل في أحد كشافات الإنارة الجانبية',status:'قيد المتابعة',createdAt:Date.now()}
+]);
+let votes=load(KEYS.votes,{});
+let ministers=load(KEYS.ministers,[
+'أحمد محمود','سارة حسن','محمود علي','عبده (مطور المنصة)'
+]);
 
-    <script>
-        const API_KEY = 'AIzaSyC80bHi4NQ1cumbNSl8WSe9O47w0_Szw7k';
-        let currentVideosList = [];
+const ministries=[
+'وزارة البيئة والخدمات',
+'وزارة التكافل الاجتماعي',
+'وزارة الأنشطة والتعاون',
+'وزارة الإعلام والتطوير'
+];
 
-        let liveStreams = [
-            { id: "5qap5aO4i9A", title: "بث مباشر: ألعاب استريمرز العرب الآن 🔴", channel: "Gaming Live TV", viewers: "14.2 ألف مشاهد" },
-            { id: "jfKfPfyJRdk", title: "استريمر يوتيوب مباشر - موسيقى هادئة للدراسة والتركيز 🎧", channel: "Lofi Girl Live", viewers: "45 ألف مشاهد" }
-        ];
+function escapeHTML(value){
+return String(value).replace(/[&<>"']/g,char=>({
+'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+}[char]));
+}
 
-        window.onload = () => {
-            let user = localStorage.getItem('abdo_tube_user');
-            if (user) {
-                document.getElementById('login-modal').style.display = 'none';
-                applyUserRole(user);
-            } else {
-                document.getElementById('login-modal').style.display = 'flex';
-            }
-            fetchRealVideos('trending');
-            renderLiveStreams();
-            loadChatMessages();
-            initEventListeners();
-        };
+function init(){
+renderAuth();
+renderCandidates();
+renderReports();
+renderMinisters();
+initializeElection();
+}
+document.addEventListener('DOMContentLoaded',init);
 
-        function initEventListeners() {
-            // ربط زر الدخول بشكل مباشر وبرمجي آمن
-            document.getElementById('login-btn').addEventListener('click', submitUserLogin);
-            document.getElementById('username-input').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') submitUserLogin();
-            });
+function renderAuth(){
+const container=document.getElementById('authSection');
+const candidateInput=document.getElementById('candNameInput');
 
-            // ربط الشات والبحث والرفع
-            document.getElementById('chat-send-btn').addEventListener('click', sendChatMessage);
-            document.getElementById('chat-input-msg').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') sendChatMessage();
-            });
-            document.getElementById('upload-btn').addEventListener('click', uploadMyVideo);
-            document.getElementById('sub-toggle-btn').addEventListener('click', toggleSubscribe);
-            document.getElementById('search-input').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') executeSearch();
-            });
-        }
+if(currentUser){
+container.innerHTML=`
+<span class="text-sm font-bold gold-text">👤 ${escapeHTML(currentUser)}</span>
+<button onclick="logout()" class="text-xs bg-slate-800 px-3 py-2 rounded">خروج</button>`;
+candidateInput.value=currentUser;
+}else{
+container.innerHTML=`
+<input id="usernameInput" maxlength="30" type="text" placeholder="اكتب اسمك..." class="bg-slate-800 border border-slate-700 text-xs text-white p-2 rounded w-28 sm:w-40">
+<button onclick="login()" class="gold-bg text-slate-900 font-bold text-xs px-3 py-2 rounded">دخول</button>`;
+candidateInput.value='';
+}
+}
 
-        function submitUserLogin() {
-            let inputField = document.getElementById('username-input');
-            let input = inputField.value.trim();
-            if (!input) input = "عبده"; 
-            localStorage.setItem('abdo_tube_user', input);
-            document.getElementById('login-modal').style.display = 'none';
-            applyUserRole(input);
-        }
+function login(){
+const input=document.getElementById('usernameInput');
+const name=input?.value.trim();
+if(!name){alert('اكتب اسمك أولاً');return}
+currentUser=name;
+localStorage.setItem(KEYS.user,currentUser);
+renderAuth();
+alert('أهلاً بك يا '+currentUser);
+}
 
-        function logoutUser() {
-            localStorage.removeItem('abdo_tube_user');
-            document.getElementById('username-input').value = '';
-            document.getElementById('login-modal').style.display = 'flex';
-        }
+function logout(){
+localStorage.removeItem(KEYS.user);
+currentUser=null;
+renderAuth();
+}
 
-        function applyUserRole(name) {
-            document.getElementById('display-user-name').innerText = name;
-            let firstLetter = name.charAt(0).toUpperCase();
-            document.getElementById('avatar-letter').innerText = firstLetter;
+function selectStreetPoint(title,description){
+document.getElementById('streetPointDetails').innerHTML=
+`<span class="gold-text font-bold">${escapeHTML(title)}:</span> ${escapeHTML(description)}`;
+}
 
-            let lower = name.toLowerCase();
-            if (lower === 'abpo' || lower === 'abdo' || name === 'عبده') {
-                document.getElementById('owner-crown').style.display = 'block';
-                document.getElementById('owner-panel').style.display = 'block';
-                document.getElementById('profile-avatar-box').style.background = 'linear-gradient(135deg, #FFD700, #ff8c00)';
-                document.getElementById('badge-container').innerHTML = `مالك التطبيق والتوثيق الرسمي <i class="fa-solid fa-circle-check" style="color:#3ea6ff;"></i>`;
-            } else {
-                document.getElementById('owner-crown').style.display = 'none';
-                document.getElementById('owner-panel').style.display = 'none';
-                document.getElementById('profile-avatar-box').style.background = '#333';
-                document.getElementById('badge-container').innerText = 'مشترك في عبده يوتيوب';
-            }
-        }
+// الانتخابات: مدة 24 ساعة من وقت بدء الجولة
+let electionInterval=null;
+function initializeElection(){
+let end=Number(localStorage.getItem(KEYS.timer));
+if(!end || !Number.isFinite(end)){
+end=Date.now()+24*60*60*1000;
+localStorage.setItem(KEYS.timer,String(end));
+}
+updateElectionTimer();
+if(electionInterval)clearInterval(electionInterval);
+electionInterval=setInterval(updateElectionTimer,1000);
+}
 
-        async function fetchRealVideos(query) {
-            let url = query === 'trending' 
-                ? `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&maxResults=20&regionCode=EG&key=${API_KEY}`
-                : `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=20&q=${encodeURIComponent(query)}&type=video&key=${API_KEY}`;
+function updateElectionTimer(){
+let end=Number(localStorage.getItem(KEYS.timer));
+let remaining=end-Date.now();
 
-            try {
-                let res = await fetch(url);
-                let data = await res.json();
-                if(data.items) {
-                    currentVideosList = data.items;
-                    renderFeed(currentVideosList);
-                }
-            } catch (err) { console.error(err); }
-        }
+if(remaining<=0){
+document.getElementById('electionTimer').textContent='انتهى التصويت';
+finishElection();
+return;
+}
+const hours=Math.floor(remaining/3600000);
+const minutes=Math.floor((remaining%3600000)/60000);
+const seconds=Math.floor((remaining%60000)/1000);
+document.getElementById('electionTimer').textContent=
+[hours,minutes,seconds].map(n=>String(n).padStart(2,'0')).join(':');
+}
 
-        function renderFeed(items) {
-            let feed = document.getElementById('video-feed');
-            feed.innerHTML = '';
-            items.forEach(item => {
-                let id = item.id.videoId || item.id;
-                let title = item.snippet.title;
-                let channel = item.snippet.channelTitle;
-                let thumb = item.snippet.thumbnails.high ? item.snippet.thumbnails.high.url : '';
+function finishElection(){
+if(localStorage.getItem('orshalim_election_finished')==='yes')return;
+localStorage.setItem('orshalim_election_finished','yes');
 
-                let card = document.createElement('div');
-                card.className = 'video-card';
-                card.onclick = () => openWatch(id, title, channel);
+ministries.forEach((ministry,index)=>{
+const eligible=candidates.filter(c=>c.ministry===ministry);
+if(eligible.length){
+eligible.sort((a,b)=>b.votes-a.votes);
+ministers[index]=eligible[0].name;
+}
+});
+save(KEYS.ministers,ministers);
+renderMinisters();
+alert('انتهت الانتخابات وتم تحديث أسماء الوزراء حسب النتائج.');
+}
 
-                card.innerHTML = `
-                    <div class="thumbnail-box">
-                        <img src="${thumb}">
-                    </div>
-                    <div class="video-info-box">
-                        <div class="channel-avatar">${channel.charAt(0)}</div>
-                        <div>
-                            <div class="video-title">${title}</div>
-                            <div class="sub-meta">${channel} • بث موثق عبر عبده يوتيوب</div>
-                        </div>
-                    </div>
-                `;
-                feed.appendChild(card);
-            });
-        }
+function renderMinisters(){
+for(let i=0;i<4;i++){
+const element=document.getElementById('min'+(i+1));
+if(element)element.textContent=ministers[i];
+}
+}
 
-        function renderLiveStreams() {
-            let list = document.getElementById('live-streams-list');
-            if (!list) return;
-            list.innerHTML = '';
-            liveStreams.forEach(stream => {
-                let card = document.createElement('div');
-                card.className = 'live-stream-card';
-                card.onclick = (
+document.getElementById('candidateForm').addEventListener('submit',function(e){
+e.preventDefault();
+if(!currentUser){
+alert('يرجى تسجيل الدخول أولاً');
+return;
+}
+if(Date.now()>=Number(localStorage.getItem(KEYS.timer))){
+alert('انتهى وقت الترشح والتصويت');
+return;
+}
+const ministry=document.getElementById('candMinistry').value;
+const program=document.getElementById('candProgram').value.trim();
+
+if(candidates.some(c=>c.name===currentUser&&c.ministry===ministry)){
+alert('أنت مسجل بالفعل في هذه الوزارة');
+return;
+}
+if(!program){alert('اكتب برنامجك الانتخابي');return}
+
+candidates.push({
+id:Date.now(),name:currentUser,ministry,program,votes:0
+});
+save(KEYS.candidates,candidates);
+renderCandidates();
+this.reset();
+document.getElementById('candNameInput').value=currentUser;
+alert('تم تسجيل ترشحك بنجاح!');
+});
+
+function renderCandidates(){
+const list=document.getElementById('candidatesList');
+if(!candidates.length){
+list.innerHTML='<p class="text-slate-400 text-sm">لا يوجد مرشحون حتى الآن.</p>';
+return;
+}
+list.innerHTML=candidates.map(candidate=>{
+const voted=currentUser&&votes[currentUser]===candidate.id;
+const ended=Date.now()>=Number(localStorage.getItem(KEYS.timer));
+return `
+<div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+<div class="flex justify-between gap-2">
+<strong class="gold-text">${escapeHTML(candidate.name)}</strong>
+<span class="text-xs text-slate-400">${escapeHTML(candidate.ministry)}</span>
+</div>
+<p class="text-sm text-slate-300 mt-2">${escapeHTML(candidate.program)}</p>
+<div class="flex justify-between items-center mt-3">
+<span class="text-xs text-slate-400">🗳️ ${candidate.votes} صوت</span>
+<button onclick="voteCandidate(${Number(candidate.id)})"
+${!currentUser||voted||ended?'disabled':''}
+class="gold-bg text-slate-900 px-4 py-2 rounded-lg text-xs font-bold">
+${voted?'تم التصويت':ended?'انتهى التصويت':'صوّت'}
+</button>
+</div>
+</div>`;
+}).join('');
+}
+
+function voteCandidate(id){
+if(!currentUser){alert('سجل دخولك أولاً');return}
+if(Date.now()>=Number(localStorage.getItem(KEYS.timer))){
+alert('انتهى التصويت');return;
+}
+if(votes[currentUser]){
+alert('لقد صوتّ بالفعل في هذه الجولة');return;
+}
+const candidate=candidates.find(c=>c.id===id);
+if(!candidate){alert('المرشح غير موجود');return}
+
+candidate.votes++;
+votes[currentUser]=id;
+save(KEYS.candidates,candidates);
+save(KEYS.votes,votes);
+renderCandidates();
+alert('تم تسجيل صوتك بنجاح!');
+}
+
+document.getElementById('reportForm').addEventListener('submit',function(e){
+e.preventDefault();
+const details=document.getElementById('reportDetails').value.trim();
+if(!details){alert('اكتب تفاصيل المشكلة');return}
+const report={
+id:Date.now(),
+location:document.getElementById('reportLocation').value,
+ministry:document.getElementById('reportMinistry').value,
+details,
+status:'قيد المتابعة',
+createdAt:Date.now(),
+reporter:currentUser||'زائر'
+};
+reports.unshift(report);
+save(KEYS.reports,reports);
+renderReports();
+this.reset();
+alert('تم إرسال البلاغ بنجاح');
+});
+
+function updateReportStatus(id,status){
+const report=reports.find(r=>r.id===id);
+if(!report)return;
+report.status=status;
+save(KEYS.reports,reports);
+renderReports();
+}
+
+function renderReports(){
+const feed=document.getElementById('reportsFeed');
+if(!reports.length){
+feed.innerHTML='<p class="text-sm text-slate-400">لا توجد بلاغات حالياً.</p>';
+return;
+}
+feed.innerHTML=reports.map(report=>`
+<div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+<div class="flex justify-between gap-2 mb-2">
+<strong class="gold-text text-sm">${escapeHTML(report.location)}</strong>
+<span class="text-xs text-slate-400">${escapeHTML(report.status)}</span>
+</div>
+<p class="text-xs text-slate-300 mb-2">${escapeHTML(report.ministry)}</p>
+<p class="text-sm text-slate-200">${escapeHTML(report.details)}</p>
+<p class="text-xs text-slate-500 mt-2">مقدم البلاغ: ${escapeHTML(report.reporter||'زائر')}</p>
+${currentUser?`
+<div class="flex gap-2 mt-3 flex-wrap">
+<button onclick="updateReportStatus(${Number(report.id)},'قيد المتابعة')" class="bg-blue-700 text-xs px-3 py-2 rounded">قيد المتابعة</button>
+<button onclick="updateReportStatus(${Number(report.id)},'تم الحل')" class="bg-emerald-700 text-xs px-3 py-2 rounded">تم الحل</button>
+</div>`:''}
+</div>`).join('');
+}
+</script>
+</body>
+</html>
