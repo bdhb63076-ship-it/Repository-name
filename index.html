@@ -1,1 +1,843 @@
-عب
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0F172A">
+<title>الدولة العثمانية | المنصة الرقمية الرسمية</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+<script>
+tailwind.config={
+theme:{extend:{colors:{
+gold:'#D4AF37',
+royal:'#1E3A8A',
+darkBg:'#0F172A',
+cardBg:'#1E293B',
+accent:'#3B82F6'
+},fontFamily:{cairo:['Cairo','sans-serif']}}}
+}
+</script>
+
+<style>
+body{
+font-family:Cairo,sans-serif;
+background:#0F172A;
+color:#F8FAFC
+}
+.gold-text{color:#D4AF37}
+.gold-bg{background:#D4AF37}
+.glass-panel{
+background:rgba(30,41,59,.7);
+backdrop-filter:blur(10px);
+border:1px solid rgba(212,175,55,.2)
+}
+button:disabled{opacity:.45;cursor:not-allowed}
+</style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+<!-- الشريط العلوي -->
+<nav class="glass-panel sticky top-0 z-50 px-4 py-4 flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full gold-bg flex items-center justify-center text-slate-900 text-xl">🏛️</div>
+<div>
+<h1 class="text-lg font-bold">الدولة العثمانية</h1>
+<p class="text-xs text-slate-400">المنصة الرقمية للدولة</p>
+</div>
+</div>
+<div id="authSection" class="flex items-center gap-2"></div>
+</nav>
+
+<!-- الواجهة الرئيسية -->
+<header class="py-16 px-6 text-center border-b border-slate-800">
+<div class="max-w-4xl mx-auto">
+<span class="inline-block px-4 py-1 rounded-full text-xs gold-bg text-slate-900 mb-4">
+نظام الإدارة الجماعية • 4 وزارات
+</span>
+
+<h2 class="text-4xl md:text-6xl font-black mb-4 gold-text">
+الدولة العثمانية
+</h2>
+
+<p class="text-lg text-slate-300">
+مرحباً بكم في الدولة العثمانية الرقمية، مجتمع افتراضي مستقل مفتوح للجميع، تدار شؤونه من خلال الوزارات والانتخابات المباشرة.
+</p>
+</div>
+</header>
+
+<!-- خريطة الدولة -->
+<section class="py-12 px-6 max-w-6xl mx-auto w-full">
+<h3 class="text-2xl font-bold mb-6">
+<i class="fa-solid fa-map gold-text"></i>
+خريطة الدولة العثمانية
+</h3>
+
+<div class="glass-panel p-6 rounded-2xl">
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+<button onclick="selectStreetPoint('الإقليم الشمالي','المنطقة الشمالية من الدولة ومرافقها.')" class="p-4 rounded-xl bg-slate-800 text-right border border-slate-700">
+<div class="gold-text font-bold">🏰 الإقليم الشمالي</div>
+<div class="text-xs text-slate-300">المناطق الشمالية</div>
+</button>
+
+<button onclick="selectStreetPoint('الإقليم المركزي','العاصمة الافتراضية والمركز الإداري والخدمات.')" class="p-4 rounded-xl bg-slate-800 text-right border border-slate-700">
+<div class="gold-text font-bold">🏛️ الإقليم المركزي</div>
+<div class="text-xs text-slate-300">المركز الإداري</div>
+</button>
+
+<button onclick="selectStreetPoint('الإقليم السكني','المناطق السكنية والمرافق الاجتماعية.')" class="p-4 rounded-xl bg-slate-800 text-right border border-slate-700">
+<div class="gold-text font-bold">🏠 الإقليم السكني</div>
+<div class="text-xs text-slate-300">المناطق السكنية</div>
+</button>
+
+<button onclick="selectStreetPoint('الإقليم الجنوبي','المناطق الجنوبية والامتدادات الافتراضية للدولة.')" class="p-4 rounded-xl bg-slate-800 text-right border border-slate-700">
+<div class="gold-text font-bold">🌍 الإقليم الجنوبي</div>
+<div class="text-xs text-slate-300">المناطق الجنوبية</div>
+</button>
+
+</div>
+
+<div id="streetPointDetails" class="mt-6 p-4 rounded-xl bg-slate-900 border border-slate-700 text-sm text-slate-300">
+اضغط على أي إقليم لمعرفة التفاصيل.
+</div>
+
+</div>
+</section>
+
+<!-- الوزارات -->
+<section class="py-10 px-6 max-w-6xl mx-auto w-full">
+
+<h3 class="text-2xl font-bold mb-6">
+<i class="fa-solid fa-landmark gold-text"></i>
+وزارات الدولة العثمانية
+</h3>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6" id="ministriesGrid"></div>
+
+</section>
+
+<!-- الانتخابات -->
+<section class="py-12 px-6 max-w-6xl mx-auto w-full">
+
+<div class="glass-panel p-8 rounded-2xl">
+
+<div class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-slate-700 pb-6 gap-4">
+
+<div>
+<h3 class="text-2xl font-bold gold-text mb-1">
+🗳️ الانتخابات الشهرية للدولة
+</h3>
+<p class="text-sm text-slate-300">
+التصويت مفتوح لمدة 24 ساعة.
+</p>
+</div>
+
+<div class="text-center bg-slate-900 px-6 py-3 rounded-xl border border-yellow-500">
+<div class="text-xs text-slate-400 mb-1">الوقت المتبقي:</div>
+<div id="electionTimer" class="text-2xl font-black gold-text">23:59:59</div>
+</div>
+
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+<div class="bg-slate-900/60 p-6 rounded-xl border border-slate-700">
+
+<h4 class="font-bold mb-4 text-lg">📝 الترشح للوزارة</h4>
+
+<form id="candidateForm" class="space-y-4">
+
+<input type="text" id="candNameInput" readonly required placeholder="سجل دخولك أولاً" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm">
+
+<select id="candMinistry" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm text-white">
+<option>وزارة البيئة والخدمات</option>
+<option>وزارة التكافل الاجتماعي</option>
+<option>وزارة الأنشطة والتعاون</option>
+<option>وزارة الإعلام والتطوير</option>
+</select>
+
+<textarea id="candProgram" rows="3" required placeholder="اكتب برنامجك الانتخابي وخطتك لتطوير الدولة..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm"></textarea>
+
+<button class="w-full gold-bg text-slate-900 font-bold py-3 rounded-lg">
+تأكيد الترشح 🚀
+</button>
+
+</form>
+</div>
+
+<div>
+<h4 class="font-bold mb-4 text-lg">📊 المرشحون للوزارات</h4>
+<div id="candidatesList" class="space-y-4 max-h-[380px] overflow-y-auto pr-2"></div>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- البلاغات -->
+<section class="py-12 px-6 max-w-6xl mx-auto w-full">
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+<div class="glass-panel p-6 rounded-xl">
+
+<h3 class="text-xl font-bold mb-4 gold-text">
+⚠️ تقديم بلاغ للدولة
+</h3>
+
+<form id="reportForm" class="space-y-4">
+
+<select id="reportLocation" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white">
+<option>الإقليم الشمالي</option>
+<option>الإقليم المركزي</option>
+<option>الإقليم السكني</option>
+<option>الإقليم الجنوبي</option>
+</select>
+
+<select id="reportMinistry" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-white">
+<option>وزارة البيئة والخدمات</option>
+<option>وزارة التكافل الاجتماعي</option>
+<option>وزارة الأنشطة والتعاون</option>
+<option>وزارة الإعلام والتطوير</option>
+</select>
+
+<textarea id="reportDetails" required rows="3" placeholder="اشرح المشكلة أو الطلب..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-3 text-sm"></textarea>
+
+<button class="w-full bg-blue-600 font-bold py-3 rounded-lg">
+إرسال البلاغ 📢
+</button>
+
+</form>
+</div>
+
+<div class="glass-panel p-6 rounded-xl">
+
+<h3 class="text-xl font-bold mb-4">📋 بلاغات الدولة</h3>
+
+<div id="reportsFeed" class="space-y-3 max-h-[350px] overflow-y-auto"></div>
+
+</div>
+
+</div>
+</section>
+
+<!-- الأسئلة الشائعة -->
+<section class="py-12 px-6 max-w-4xl mx-auto w-full">
+
+<h3 class="text-2xl font-bold text-center mb-8 gold-text">
+❓ الأسئلة الشائعة
+</h3>
+
+<div class="space-y-4">
+
+<div class="glass-panel p-4 rounded-xl">
+<h4 class="font-bold mb-2">كيف تعمل الدولة بدون رئيس؟</h4>
+<p class="text-sm text-slate-300">تدار الدولة افتراضياً عبر أربع وزارات، ويختار المشاركون الوزراء عن طريق الانتخابات.</p>
+</div>
+
+<div class="glass-panel p-4 rounded-xl">
+<h4 class="font-bold mb-2">هل يمكن للجميع المشاركة؟</h4>
+<p class="text-sm text-slate-300">نعم، المنصة الافتراضية مفتوحة للجميع للمشاركة والتصويت والترشح.</p>
+</div>
+
+<div class="glass-panel p-4 rounded-xl">
+<h4 class="font-bold mb-2">كيف يتم حفظ تسجيل الدخول؟</h4>
+<p class="text-sm text-slate-300">يحفظ الموقع اسم المستخدم تلقائياً على الجهاز.</p>
+</div>
+
+<div class="glass-panel p-4 rounded-xl">
+<h4 class="font-bold mb-2">هل الانتخابات حقيقية؟</h4>
+<p class="text-sm text-slate-300">الانتخابات داخل المنصة محاكاة رقمية، والبيانات الحالية محفوظة محلياً على الجهاز.</p>
+</div>
+
+</div>
+</section>
+
+<!-- التذييل -->
+<footer class="mt-auto py-6 text-center text-xs text-slate-500 border-t border-slate-800">
+الدولة العثمانية • المنصة الرقمية الافتراضية
+</footer>
+
+<script>
+
+const KEY={
+user:'orshalim_user',
+candidates:'orshalim_candidates',
+reports:'orshalim_reports',
+votes:'orshalim_votes',
+timer:'orshalim_election_end',
+ministers:'orshalim_ministers',
+finished:'orshalim_election_finished'
+};
+
+const ministries=[
+{
+name:'وزارة البيئة والخدمات',
+icon:'fa-leaf',
+color:'emerald',
+description:'مسؤولة عن البيئة والنظافة والخدمات العامة',
+defaultName:'أحمد محمود'
+},
+{
+name:'وزارة التكافل الاجتماعي',
+icon:'fa-hand-holding-heart',
+color:'rose',
+description:'مسؤولة عن الدعم والتكافل والفعاليات الاجتماعية',
+defaultName:'سارة حسن'
+},
+{
+name:'وزارة الأنشطة والتعاون',
+icon:'fa-volleyball-ball',
+color:'amber',
+description:'مسؤولة عن الرياضة والأنشطة والتعاون',
+defaultName:'محمود علي'
+},
+{
+name:'وزارة الإعلام والتطوير',
+icon:'fa-laptop-code',
+color:'cyan',
+description:'مسؤولة عن الإعلام والمنصة والتطوير الرقمي',
+defaultName:'عبده'
+}
+];
+
+function load(key,fallback){
+try{
+const value=localStorage.getItem(key);
+return value===null?fallback:JSON.parse(value);
+}catch(e){
+return fallback;
+}
+}
+
+function save(key,value){
+localStorage.setItem(key,JSON.stringify(value));
+}
+
+function esc(value){
+return String(value).replace(/[&<>"']/g,c=>({
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+'"':'&quot;',
+"'":'&#39;'
+}[c]));
+}
+
+let currentUser=localStorage.getItem(KEY.user)||null;
+
+let candidates=load(KEY.candidates,[
+{
+id:1,
+name:'محمد صابر',
+ministry:ministries[0].name,
+program:'تطوير الخدمات العامة والاهتمام بالبيئة',
+votes:12
+},
+{
+id:2,
+name:'خالد عبد السلام',
+ministry:ministries[1].name,
+program:'توفير برامج للتكافل الاجتماعي',
+votes:19
+}
+]);
+
+let reports=load(KEY.reports,[
+{
+id:1,
+location:'الإقليم الشمالي',
+ministry:ministries[0].name,
+details:'طلب تطوير خدمات الإضاءة والمرافق العامة',
+status:'قيد المتابعة',
+reporter:'زائر'
+}
+]);
+
+let votes=load(KEY.votes,{});
+
+let ministers=load(
+KEY.ministers,
+ministries.map(m=>({
+name:m.defaultName,
+elected:false
+}))
+);
+
+function init(){
+renderAuth();
+renderMinisters();
+renderCandidates();
+renderReports();
+initializeElection();
+}
+
+document.addEventListener('DOMContentLoaded',init);
+
+function renderAuth(){
+
+const container=document.getElementById('authSection');
+const nameInput=document.getElementById('candNameInput');
+
+if(currentUser){
+
+container.innerHTML=`
+<span class="text-sm font-bold gold-text">👤 ${esc(currentUser)}</span>
+<button onclick="logout()" class="text-xs bg-slate-800 px-3 py-2 rounded">خروج</button>
+`;
+
+nameInput.value=currentUser;
+
+}else{
+
+container.innerHTML=`
+<input id="usernameInput" maxlength="30" placeholder="اكتب اسمك..." class="bg-slate-800 border border-slate-700 text-xs text-white p-2 rounded w-28 sm:w-40">
+<button onclick="login()" class="gold-bg text-slate-900 font-bold text-xs px-3 py-2 rounded">دخول</button>
+`;
+
+nameInput.value='';
+
+}
+}
+
+function login(){
+
+const name=document.getElementById('usernameInput')?.value.trim();
+
+if(!name){
+alert('اكتب اسمك أولاً');
+return;
+}
+
+currentUser=name;
+
+localStorage.setItem(KEY.user,name);
+
+renderAuth();
+renderCandidates();
+renderReports();
+
+alert('أهلاً بك في الدولة العثمانية يا '+name);
+
+}
+
+function logout(){
+
+localStorage.removeItem(KEY.user);
+currentUser=null;
+
+renderAuth();
+renderCandidates();
+renderReports();
+
+}
+
+function selectStreetPoint(title,description){
+
+document.getElementById('streetPointDetails').innerHTML=
+`<span class="gold-text font-bold">${esc(title)}:</span> ${esc(description)}`;
+
+}
+
+// عرض الوزارات والوزراء
+
+function renderMinisters(){
+
+document.getElementById('ministriesGrid').innerHTML=ministries.map((m,i)=>{
+
+const minister=ministers[i]||{
+name:m.defaultName,
+elected:false
+};
+
+return `
+
+<div class="glass-panel p-5 rounded-xl text-center border-t-4 border-${m.color}-500">
+
+<i class="fa-solid ${m.icon} text-3xl text-${m.color}-400 mb-3"></i>
+
+<h4 class="font-bold text-white mb-2">${esc(m.name)}</h4>
+
+<div class="text-sm gold-text font-bold mb-2">${esc(minister.name)}</div>
+
+${minister.elected?
+`
+<div class="inline-flex flex-col items-center gap-1">
+<span class="text-xs text-emerald-400 font-bold">🏆 وزير منتخب</span>
+<span class="text-xs text-slate-300">${esc('وزير '+m.name.replace('وزارة ','')+' المنتخب')}</span>
+</div>
+`:
+`
+<span class="text-xs text-slate-400">الإدارة الحالية / لم تُحسم الانتخابات</span>
+`}
+
+<p class="text-xs text-slate-400 mt-3">${esc(m.description)}</p>
+
+</div>
+
+`;
+
+}).join('');
+
+}
+
+// الانتخابات
+
+let electionInterval=null;
+
+function initializeElection(){
+
+let end=Number(localStorage.getItem(KEY.timer));
+
+if(!end||!Number.isFinite(end)){
+
+end=Date.now()+86400000;
+
+localStorage.setItem(KEY.timer,String(end));
+
+}
+
+if(electionInterval){
+clearInterval(electionInterval);
+}
+
+updateElectionTimer();
+
+electionInterval=setInterval(updateElectionTimer,1000);
+
+}
+
+function updateElectionTimer(){
+
+const end=Number(localStorage.getItem(KEY.timer));
+const remaining=end-Date.now();
+
+if(remaining<=0){
+
+document.getElementById('electionTimer').textContent='انتهى التصويت';
+
+finishElection();
+
+return;
+
+}
+
+const h=Math.floor(remaining/3600000);
+const m=Math.floor(remaining%3600000/60000);
+const s=Math.floor(remaining%60000/1000);
+
+document.getElementById('electionTimer').textContent=
+[h,m,s].map(n=>String(n).padStart(2,'0')).join(':');
+
+}
+
+function finishElection(){
+
+if(localStorage.getItem(KEY.finished)==='yes')return;
+
+localStorage.setItem(KEY.finished,'yes');
+
+ministries.forEach((ministry,index)=>{
+
+const eligible=candidates.filter(c=>c.ministry===ministry.name);
+
+if(eligible.length){
+
+eligible.sort((a,b)=>b.votes-a.votes);
+
+const winner=eligible[0];
+
+ministers[index]={
+name:winner.name,
+elected:true,
+candidateId:winner.id
+};
+
+}
+
+});
+
+save(KEY.ministers,ministers);
+
+renderMinisters();
+renderCandidates();
+
+alert('🏆 انتهت الانتخابات! تم إعلان الوزراء الفائزين في الدولة العثمانية.');
+
+}
+
+// تسجيل المرشحين
+
+document.getElementById('candidateForm').addEventListener('submit',function(e){
+
+e.preventDefault();
+
+if(!currentUser){
+alert('سجل دخولك أولاً');
+return;
+}
+
+if(Date.now()>=Number(localStorage.getItem(KEY.timer))){
+alert('انتهى وقت الانتخابات');
+return;
+}
+
+const ministry=document.getElementById('candMinistry').value;
+
+const program=document.getElementById('candProgram').value.trim();
+
+if(!program){
+alert('اكتب برنامجك الانتخابي');
+return;
+}
+
+if(candidates.some(c=>c.name===currentUser&&c.ministry===ministry)){
+
+alert('أنت مسجل بالفعل في هذه الوزارة');
+return;
+
+}
+
+candidates.push({
+id:Date.now(),
+name:currentUser,
+ministry,
+program,
+votes:0
+});
+
+save(KEY.candidates,candidates);
+
+renderCandidates();
+
+this.reset();
+
+document.getElementById('candNameInput').value=currentUser;
+
+alert('تم تسجيل ترشحك في الدولة العثمانية بنجاح!');
+
+});
+
+// عرض المرشحين
+
+function renderCandidates(){
+
+const list=document.getElementById('candidatesList');
+
+if(!candidates.length){
+
+list.innerHTML='<p class="text-slate-400 text-sm">لا يوجد مرشحون حتى الآن.</p>';
+
+return;
+
+}
+
+const ended=Date.now()>=Number(localStorage.getItem(KEY.timer));
+
+list.innerHTML=candidates.map(c=>{
+
+const hasVoted=currentUser&&votes[currentUser]!==undefined;
+
+const voted=hasVoted&&Number(votes[currentUser])===Number(c.id);
+
+return `
+
+<div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+
+<div class="flex justify-between gap-2 flex-wrap">
+
+<strong class="gold-text">${esc(c.name)}</strong>
+
+<span class="text-xs text-slate-400">${esc(c.ministry)}</span>
+
+</div>
+
+<p class="text-sm text-slate-300 mt-2">${esc(c.program)}</p>
+
+<div class="flex justify-between items-center mt-3">
+
+<span class="text-xs text-slate-400">🗳️ ${Number(c.votes)||0} صوت</span>
+
+<button onclick="voteCandidate(${Number(c.id)})"
+${!currentUser||hasVoted||ended?'disabled':''}
+class="gold-bg text-slate-900 px-4 py-2 rounded-lg text-xs font-bold">
+
+${voted?'تم التصويت':hasVoted?'اكتملت مشاركتك':ended?'انتهى التصويت':'صوّت'}
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}).join('');
+
+}
+
+// التصويت
+
+function voteCandidate(id){
+
+if(!currentUser){
+alert('سجل دخولك أولاً');
+return;
+}
+
+if(Date.now()>=Number(localStorage.getItem(KEY.timer))){
+alert('انتهى التصويت');
+return;
+}
+
+if(votes[currentUser]!==undefined){
+alert('لقد صوتّ بالفعل في هذه الجولة');
+return;
+}
+
+const candidate=candidates.find(c=>Number(c.id)===Number(id));
+
+if(!candidate){
+alert('المرشح غير موجود');
+return;
+}
+
+candidate.votes=(Number(candidate.votes)||0)+1;
+
+votes[currentUser]=id;
+
+save(KEY.candidates,candidates);
+save(KEY.votes,votes);
+
+renderCandidates();
+
+alert('تم تسجيل صوتك بنجاح!');
+
+}
+
+// البلاغات
+
+document.getElementById('reportForm').addEventListener('submit',function(e){
+
+e.preventDefault();
+
+const details=document.getElementById('reportDetails').value.trim();
+
+if(!details){
+alert('اكتب تفاصيل البلاغ');
+return;
+}
+
+reports.unshift({
+
+id:Date.now(),
+
+location:document.getElementById('reportLocation').value,
+
+ministry:document.getElementById('reportMinistry').value,
+
+details,
+
+status:'قيد المتابعة',
+
+reporter:currentUser||'زائر'
+
+});
+
+save(KEY.reports,reports);
+
+renderReports();
+
+this.reset();
+
+alert('تم إرسال البلاغ إلى الدولة العثمانية بنجاح');
+
+});
+
+// تحديث حالة البلاغ
+
+function updateReportStatus(id,status){
+
+if(!currentUser){
+alert('سجل دخولك أولاً');
+return;
+}
+
+const report=reports.find(r=>Number(r.id)===Number(id));
+
+if(!report)return;
+
+report.status=status;
+
+save(KEY.reports,reports);
+
+renderReports();
+
+}
+
+// عرض البلاغات
+
+function renderReports(){
+
+const feed=document.getElementById('reportsFeed');
+
+if(!reports.length){
+
+feed.innerHTML='<p class="text-sm text-slate-400">لا توجد بلاغات حالياً.</p>';
+
+return;
+
+}
+
+feed.innerHTML=reports.map(r=>`
+
+<div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+
+<div class="flex justify-between gap-2 mb-2">
+
+<strong class="gold-text text-sm">${esc(r.location)}</strong>
+
+<span class="text-xs ${r.status==='تم الحل'?'text-emerald-400':'text-amber-400'}">${esc(r.status)}</span>
+
+</div>
+
+<p class="text-xs text-slate-300 mb-2">${esc(r.ministry)}</p>
+
+<p class="text-sm">${esc(r.details)}</p>
+
+<p class="text-xs text-slate-500 mt-2">مقدم البلاغ: ${esc(r.reporter||'زائر')}</p>
+
+${currentUser?`
+
+<div class="flex gap-2 mt-3 flex-wrap">
+
+<button onclick="updateReportStatus(${Number(r.id)},'قيد المتابعة')" class="bg-blue-700 text-xs px-3 py-2 rounded">
+قيد المتابعة
+</button>
+
+<button onclick="updateReportStatus(${Number(r.id)},'تم الحل')" class="bg-emerald-700 text-xs px-3 py-2 rounded">
+تم الحل
+</button>
+
+</div>
+
+`:''}
+
+</div>
+
+`).join('');
+
+}
+
+</script>
+
+</body>
+  </html>
+  
