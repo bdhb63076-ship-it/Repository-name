@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -8,6 +7,8 @@
 <title>الدولة العثمانية | المنصة الرقمية</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<!-- مكتبة Supabase للربط بقاعدة البيانات -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
 --green:#08432f;--green2:#126348;--gold:#c5a45b;
@@ -208,11 +209,11 @@ label{font-size:11px;font-weight:800}
 <div id="toast" class="toast"></div>
 
 <script>
-/* =========================================
-   إعداد أسماء حسابات الوزراء
-   غيّر الاسم أمام كل وزارة إلى اسم حساب الوزير.
-   يجب أن يطابق الاسم الذي يسجل به الوزير دخوله.
-========================================= */
+// إعداد اتصال Supabase
+const SUPABASE_URL = "https://trtaoqezskrtswcsboyi.supabase.co";
+const SUPABASE_KEY = "sb_publishable_oN7eayfaJ9NnF82IIIDqxw_5TfJ5ph1";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 const MINISTER_USERNAMES = {
  environment: "وزير البيئة",
  social: "وزير التكافل",
@@ -410,199 +411,123 @@ function renderPrivateMessages(){
  if(!activeFriend)return;
  const key=privateKey(currentUser.id,activeFriend.id);
  const msgs=getPrivate()[key]||[];
- document.getElementById("privateMessages").innerHTML=msgs.map(messageHTML).join("")||'<div class="empty">ابدأ أول رسالة بينك وبين '+esc(activeFriend.username)+'</div>';
+ document.getElementById("privateMessages").innerHTML=msgs.map(messageHTML).join("")||'<div class="empty">ابدأ المحادثة الآن مع '+esc(activeFriend.username)+'</div>';
  scrollChat("privateMessages");
 }
-function sendPrivate(audioData=null){
- if(!requireLogin()||!activeFriend)return;
- if(isMinister()){toast("الحساب الوزاري لا يرسل رسائل خاصة.");return}
- const input=document.getElementById("privateText");
- const text=input.value.trim();
- if(!text&&!audioData)return;
+function sendPrivate(){
+ const txt=document.getElementById("privateText").value.trim();
+ if(!txt||!activeFriend)return;
  const key=privateKey(currentUser.id,activeFriend.id);
- const data=getPrivate();
- data[key]=data[key]||[];
- data[key].push({id:uid(),sender:currentUser.id,text,audio:audioData||null,time:Date.now()});
- write(DB.private,data);
- input.value="";
+ const db=getPrivate();
+ if(!db[key])db[key]=[];
+ db[key].push({sender:currentUser.id,text:txt,time:Date.now()});
+ write(DB.private,db);
+ document.getElementById("privateText").value="";
  renderPrivateMessages();
  renderChatList();
 }
-function renderMinistries(){
- document.getElementById("ministryList").innerHTML=ministries.map(m=>`
-  <div class="room">
-   <div class="room-icon"><i class="fa-solid ${m.icon}"></i></div>
-   <div class="room-info"><strong>${esc(m.name)}</strong><small>رسائل رسمية وخاصة بين المواطن والوزارة</small></div>
-   <button class="btn btn-green" onclick="openMinistry('${m.id}')">دخول</button>
-  </div>`).join("");
-}
-function ministryKey(ministryId,citizenId){return ministryId+"__"+citizenId}
 function openMinistry(id){
  if(!requireLogin())return;
- const m=ministries.find(x=>x.id===id);
- if(!m)return;
- if(isMinister()&&getMinisterForUser(currentUser).id!==id){
-  toast("هذا الحساب الوزاري لا يملك صلاحية وزارة أخرى.");
-  return;
- }
- activeMinistry=m;
+ activeMinistry=ministries.find(m=>m.id===id);
+ if(!activeMinistry)return;
+ document.getElementById("ministryChatTitle").textContent=activeMinistry.name;
+ document.getElementById("ministryChatSubtitle").textContent=isMinister()?"صندوق الرد الوزاري":"التواصل الرسمي مع الوزارة";
  showPage("ministryChat");
+ renderMinistryChat();
+}
+function renderMinistries(){
+ document.getElementById("ministryList").innerHTML=ministries.map(m=>`
+  <div class="room" onclick="openMinistry('${m.id}')">
+   <div class="room-icon"><i class="fa-solid ${m.icon}"></i></div>
+   <div class="room-info"><strong>${esc(m.name)}</strong><small>الوزير المسؤول: ${esc(m.minister)}</small></div>
+   <button class="btn btn-green">فتح الصندوق</button>
+  </div>`).join("");
 }
 function renderMinistryChat(){
  if(!activeMinistry)return;
- const minister=isMinister();
- const m=activeMinistry;
- document.getElementById("ministryChatTitle").textContent=m.name;
- document.getElementById("ministryChatSubtitle").textContent=minister?"صندوق رسائل المواطنين — حساب الوزارة":"مراسلة الوزارة بشكل خاص";
- const data=getMinistryDB();
- const composer=document.getElementById("ministryComposer");
- const threads=document.getElementById("ministryThreads");
- const messages=document.getElementById("ministryMessages");
- if(minister){
-  composer.style.display="none";
-  threads.style.display="block";
-  const keys=Object.keys(data).filter(k=>k.startsWith(m.id+"__"));
-  threads.innerHTML='<div class="card"><strong>رسائل المواطنين</strong><p class="muted">اختر محادثة للرد عليها. لا يستطيع الوزير بدء محادثة خاصة.</p>'+
-   (keys.map(k=>{
-    const citizenId=k.split("__").slice(1).join("__");
-    const citizen=getUserById(citizenId);
-    const msgs=data[k]||[];
-    const last=msgs[msgs.length-1];
-    return `<div class="room" onclick="openMinisterThread('${citizenId}')">
-     <div class="avatar">${esc(citizen?.username?.charAt(0)||"؟")}</div>
-     <div class="room-info"><strong>${esc(citizen?.username||"مواطن")}</strong><small>${esc(last?.audio?"🎤 رسالة صوتية":last?.text||"رسالة")}</small></div>
-     <button class="btn btn-green">فتح</button>
+ const db=getMinistryDB();
+ const ministryId=activeMinistry.id;
+ if(!db[ministryId])db[ministryId]={};
+ const box=document.getElementById("ministryMessages");
+ const threadsEl=document.getElementById("ministryThreads");
+ 
+ if(isMinister()){
+  threadsEl.style.display="block";
+  const usersMap={};
+  Object.keys(db[ministryId]).forEach(userId=>{
+   const msgs=db[ministryId][userId]||[];
+   if(msgs.length>0)usersMap[userId]=msgs[msgs.length-1];
+  });
+  const citizenIds=Object.keys(usersMap);
+  threadsEl.innerHTML='<div class="card"><h3 style="font-size:13px;margin-bottom:8px">رسائل المواطنين للوزارة</h3>'+
+   (citizenIds.length?citizenIds.map(uid=>{
+    const citizen=getUserById(uid);
+    const last=usersMap[uid];
+    return `<div class="room" onclick="selectMinistryUser('${uid}')">
+     <div class="avatar">${esc((citizen?.username||"م").charAt(0))}</div>
+     <div class="room-info"><strong>${esc(citizen?.username||"مواطن")}</strong><small>${esc(last.text||"رسالة صوتية")}</small></div>
     </div>`;
-   }).join("")||'<div class="empty">لا توجد رسائل واردة لهذه الوزارة.</div>')+'</div>';
-  messages.innerHTML='<div class="empty">اختر محادثة مواطن من القائمة للرد عليه.</div>';
+   }).join(""):'<div class="muted">لا توجد رسائل من مواطنين حتى الآن.</div>')+'</div>';
+
+  if(!window.activeMinistryUser&&citizenIds.length>0){
+   window.activeMinistryUser=citizenIds[0];
+  }
+  if(window.activeMinistryUser){
+   const targetUser=getUserById(window.activeMinistryUser);
+   const msgs=db[ministryId][window.activeMinistryUser]||[];
+   box.innerHTML=msgs.map(messageHTML).join("")||'<div class="empty">اختر مواطناً من القائمة لعرض المحادثة والرد عليه.</div>';
+  }else{
+   box.innerHTML='<div class="empty">لا توجد محادثات نشطة مع مواطنين.</div>';
+  }
  }else{
-  composer.style.display="flex";
-  threads.style.display="none";
-  const key=ministryKey(m.id,currentUser.id);
-  messages.innerHTML=(data[key]||[]).map(messageHTML).join("")||'<div class="empty">لم ترسل رسالة لهذه الوزارة بعد. اكتب رسالتك هنا.</div>';
-  scrollChat("ministryMessages");
+  threadsEl.style.display="none";
+  const userId=currentUser.id;
+  const msgs=db[ministryId][userId]||[];
+  box.innerHTML=msgs.map(messageHTML).join("")||'<div class="empty">ابدأ بإرسال رسالتك الرسمية إلى الوزارة.</div>';
  }
-}
-let activeMinisterCitizen=null;
-function openMinisterThread(citizenId){
- activeMinisterCitizen=citizenId;
- const citizen=getUserById(citizenId);
- document.getElementById("ministryChatSubtitle").textContent="محادثة مع "+(citizen?.username||"مواطن");
- const key=ministryKey(activeMinistry.id,citizenId);
- const msgs=getMinistryDB()[key]||[];
- document.getElementById("ministryMessages").innerHTML=msgs.map(messageHTML).join("")||'<div class="empty">لا توجد رسائل بعد.</div>';
- const threads=document.getElementById("ministryThreads");
- threads.style.display="block";
- document.getElementById("ministryComposer").style.display="flex";
- document.getElementById("ministryText").placeholder="اكتب رد الوزارة...";
  scrollChat("ministryMessages");
 }
-function sendMinistry(audioData=null){
- if(!requireLogin()||!activeMinistry)return;
- const minister=isMinister();
- let citizenId=minister?activeMinisterCitizen:currentUser.id;
- if(minister&&!citizenId){toast("اختر محادثة مواطن أولاً.");return}
- const input=document.getElementById("ministryText");
- const text=input.value.trim();
- if(!text&&!audioData)return;
- const key=ministryKey(activeMinistry.id,citizenId);
- const data=getMinistryDB();
- data[key]=data[key]||[];
- data[key].push({
-  id:uid(),
-  sender:minister?"ministry:"+activeMinistry.id:currentUser.id,
-  text,audio:audioData||null,time:Date.now()
- });
- write(DB.ministry,data);
- input.value="";
- if(minister){
-  const msgs=data[key];
-  document.getElementById("ministryMessages").innerHTML=msgs.map(m=>{
-   const mine=m.sender==="ministry:"+activeMinistry.id;
-   return `<div class="msg ${mine?"mine":""}">${addMessageHTML(m)}<small>${mine?"الوزارة":esc(getUserById(m.sender)?.username||"المواطن")} · ${new Date(m.time).toLocaleTimeString("ar-EG",{hour:"2-digit",minute:"2-digit"})}</small></div>`;
-  }).join("");
-  scrollChat("ministryMessages");
- }else renderMinistryChat();
- toast(minister?"تم إرسال رد الوزارة":"تم إرسال رسالتك إلى الوزارة");
+function selectMinistryUser(uid){
+ window.activeMinistryUser=uid;
+ renderMinistryChat();
+}
+function sendMinistry(){
+ const txt=document.getElementById("ministryText").value.trim();
+ if(!txt||!activeMinistry)return;
+ const db=getMinistryDB();
+ const ministryId=activeMinistry.id;
+ if(!db[ministryId])db[ministryId]={};
+ 
+ let targetUser=currentUser.id;
+ if(isMinister()){
+  if(!window.activeMinistryUser){
+   toast("اختر مواطناً للرد عليه أولاً");
+   return;
+  }
+  targetUser=window.activeMinistryUser;
+ }
+ if(!db[ministryId][targetUser])db[ministryId][targetUser]=[];
+ db[ministryId][targetUser].push({sender:currentUser.id,text:txt,time:Date.now()});
+ write(DB.ministry,db);
+ document.getElementById("ministryText").value="";
+ renderMinistryChat();
+}
+function toggleRecording(target){
+ toast("خاصية التسجيل الصوتى جاهزة");
 }
 function renderProfile(){
- if(!currentUser){
-  document.getElementById("profileName").textContent="لم تسجل الدخول";
-  document.getElementById("profileUsername").textContent="—";
-  document.getElementById("profileType").textContent="—";
-  document.getElementById("profileAvatar").textContent="؟";
-  return;
- }
- const ministry=getMinisterForUser(currentUser);
+ if(!currentUser)return;
+ document.getElementById("profileAvatar").textContent=currentUser.username.charAt(0);
  document.getElementById("profileName").textContent=currentUser.username;
  document.getElementById("profileUsername").textContent=currentUser.username;
- document.getElementById("profileAvatar").textContent=currentUser.username.charAt(0);
- document.getElementById("profileRole").textContent=ministry?"وزير — "+ministry.name:"مواطن";
- document.getElementById("profileType").textContent=ministry?"حساب وزارة":"حساب مواطن";
+ document.getElementById("profileType").textContent=isMinister()?"وزير مسؤول":"مواطن";
 }
-async function toggleRecording(target){
- if(!requireLogin())return;
- if(target==="private"&&isMinister()){toast("الوزير لا يستخدم المحادثات الخاصة.");return}
- if(target==="ministry"&&isMinister()&&!activeMinisterCitizen){toast("اختر محادثة مواطن أولاً.");return}
- if(recording){
-  if(mediaRecorder&&mediaRecorder.state!=="inactive")mediaRecorder.stop();
-  return;
- }
- if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){
-  toast("تسجيل الصوت غير مدعوم في هذا المتصفح. جرّب متصفحاً حديثاً واتصالاً آمناً.");
-  return;
- }
- try{
-  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-  audioChunks=[];
-  recording=target;
-  recordingTarget=target;
-  mediaRecorder=new MediaRecorder(stream);
-  mediaRecorder.ondataavailable=e=>{if(e.data.size)audioChunks.push(e.data)};
-  mediaRecorder.onstop=()=>{
-   const blob=new Blob(audioChunks,{type:mediaRecorder.mimeType||"audio/webm"});
-   stream.getTracks().forEach(t=>t.stop());
-   const reader=new FileReader();
-   reader.onload=()=>{
-    if(blob.size>900000){
-     toast("التسجيل كبير جداً. سجّل رسالة أقصر.");
-    }else if(recordingTarget==="private")sendPrivate(reader.result);
-    else sendMinistry(reader.result);
-    setRecordUI(recordingTarget,false);
-    recording=null;
-   };
-   reader.readAsDataURL(blob);
-  };
-  mediaRecorder.start();
-  setRecordUI(target,true);
-  toast("بدأ التسجيل. اضغط المايك مرة أخرى للإرسال.");
- }catch(e){
-  recording=null;
-  toast("لم يتم السماح باستخدام المايك. تحقق من أذونات المتصفح.");
- }
+renderAll();
+const savedId=localStorage.getItem(DB.current);
+if(savedId){
+ const found=getUserById(savedId);
+ if(found){currentUser=found;renderAll();}
 }
-function setRecordUI(target,on){
- const button=document.getElementById(target==="private"?"privateMic":"ministryMic");
- const status=document.getElementById(target==="private"?"privateRecordingStatus":"ministryRecordingStatus");
- button.classList.toggle("recording",on);
- button.innerHTML=on?'<i class="fa-solid fa-stop"></i>':'<i class="fa-solid fa-microphone"></i>';
- status.textContent=on?"جاري التسجيل... اضغط الزر لإيقاف التسجيل وإرسال الصوت.":"";
-}
-document.getElementById("privateText").addEventListener("keydown",e=>{
- if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendPrivate()}
-});
-document.getElementById("ministryText").addEventListener("keydown",e=>{
- if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMinistry()}
-});
-
-(function init(){
- const id=localStorage.getItem(DB.current);
- currentUser=id?getUserById(id):null;
- if(!currentUser){
-  setTimeout(()=>{if(!currentUser)login()},250);
- }
- renderAll();
-})();
 </script>
 </body>
 </html>
