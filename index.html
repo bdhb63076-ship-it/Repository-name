@@ -1,533 +1,696 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta name="theme-color" content="#073d2c">
-<title>الدولة العثمانية | المنصة الرقمية</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<!-- مكتبة Supabase للربط بقاعدة البيانات -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#121212">
+<title>الدولة العثمانية</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-:root{
---green:#08432f;--green2:#126348;--gold:#c5a45b;
---cream:#f4f1e8;--white:#fffefa;--text:#183c30;
---muted:#8b958c;--border:#e8e4d9;--red:#b94c4c;
-}
 *{box-sizing:border-box}
-body{margin:0;font-family:Cairo,sans-serif;background:var(--cream);color:var(--text);padding-bottom:85px}
-button,input,textarea,select{font-family:inherit}
-button{cursor:pointer}
-.topbar{height:65px;background:var(--green);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 15px;position:sticky;top:0;z-index:50;box-shadow:0 3px 15px #0002}
-.brand{display:flex;align-items:center;gap:10px}
-.brand-logo{width:39px;height:39px;border:1px solid var(--gold);border-radius:50%;display:grid;place-items:center;color:var(--gold);font-size:20px}
-.brand h1{font-size:15px;margin:0;font-weight:900}
-.brand small{display:block;color:#d9c99e;font-size:9px}
-.top-actions{display:flex;gap:15px}
-.top-actions button{background:none;border:0;color:white;font-size:18px}
-.container{max-width:850px;margin:auto;padding:15px}
-.page{display:none;animation:show .2s}
-.page.active{display:block}
-@keyframes show{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-.hero{background:linear-gradient(135deg,#073d2c,#17654a);border-radius:18px;color:white;padding:22px;margin-bottom:16px}
-.hero h2{font-size:25px;margin:8px 0}
-.hero p{font-size:12px;line-height:2;color:#e2eee7}
-.small{color:#d8c89d;font-size:11px}
-.section-title{display:flex;justify-content:space-between;align-items:center;margin:20px 2px 12px}
-.section-title h3{font-size:16px;margin:0;font-weight:900}
-.card{background:var(--white);border:1px solid var(--border);border-radius:15px;padding:15px;margin-bottom:12px;box-shadow:0 3px 12px #233d2608}
-.btn{border:0;border-radius:9px;padding:10px 14px;font-size:12px;font-weight:800}
-.btn-green{background:var(--green);color:white}
-.btn-gold{background:var(--gold);color:#183c30}
-.btn-light{background:#edf1e9;color:var(--green)}
-.btn-red{background:#f8e9e6;color:#a43e36}
-.btn-block{width:100%}
-.input{width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:white;color:var(--text);outline:none;font-size:12px;margin:5px 0 11px}
-textarea.input{resize:vertical;min-height:80px}
-label{font-size:11px;font-weight:800}
-.muted{color:var(--muted);font-size:11px}
-.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.ministry{background:white;border:1px solid var(--border);border-radius:14px;padding:13px;text-align:center}
-.mi{width:42px;height:42px;border-radius:50%;background:#eaf0e8;color:var(--green);display:grid;place-items:center;margin:0 auto 8px;font-size:18px}
-.ministry h4{font-size:12px;margin:0 0 5px}
-.ministry p{font-size:10px;color:var(--muted)}
-.room{display:flex;align-items:center;gap:11px;padding:12px;background:white;border:1px solid var(--border);border-radius:13px;margin-bottom:9px}
-.room-icon{width:43px;height:43px;flex-shrink:0;border-radius:12px;background:#eaf0e8;display:grid;place-items:center;color:var(--green);font-size:18px}
-.room-info{flex:1;min-width:0}
-.room-info strong{font-size:12px;display:block}
-.room-info small{font-size:10px;color:var(--muted);display:block}
-.avatar{width:43px;height:43px;flex-shrink:0;border-radius:50%;background:var(--green);color:var(--gold);display:grid;place-items:center;font-size:18px;font-weight:900}
-.badge{display:inline-block;padding:3px 8px;border-radius:20px;background:#e8f1e8;color:var(--green);font-size:9px;font-weight:800}
-.chat-box{background:#f0eee5;border-radius:13px;padding:12px;height:390px;overflow-y:auto;display:flex;flex-direction:column}
-.msg{max-width:85%;background:white;border-radius:12px 12px 3px 12px;padding:10px;margin:5px 0;font-size:11px;line-height:1.8;overflow-wrap:anywhere;box-shadow:0 2px 5px #00000008}
-.msg.mine{align-self:flex-start;background:#dcecdf;border-radius:12px 12px 12px 3px}
-.msg small{display:block;color:var(--muted);font-size:9px}
-.msg audio{width:220px;max-width:100%;height:35px}
-.chat-compose{display:flex;gap:7px;align-items:flex-end;margin-top:9px}
-.chat-compose textarea{flex:1;min-height:43px;max-height:100px;resize:vertical}
-.icon-btn{width:43px;height:43px;border:0;border-radius:11px;background:#eaf0e8;color:var(--green);font-size:17px}
-.icon-btn.recording{background:#f8dede;color:#bd3434;animation:pulse 1s infinite}
-@keyframes pulse{50%{opacity:.5}}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:72px;background:#fffefa;border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
-.nav-item{border:0;background:none;color:#92998f;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px;min-width:55px}
-.nav-item i{font-size:17px}
-.nav-item.active{color:var(--green);font-weight:900}
-.nav-item.active i{color:var(--gold)}
-.empty{text-align:center;color:var(--muted);font-size:12px;padding:25px}
-.divider{height:1px;background:var(--border);margin:12px 0}
-.toast{position:fixed;bottom:85px;left:50%;transform:translateX(-50%);background:#173f30;color:white;padding:11px 18px;border-radius:12px;font-size:11px;z-index:200;display:none;max-width:90%;text-align:center}
-.chat-header{display:flex;align-items:center;gap:10px;background:white;padding:12px;border-radius:12px;border:1px solid var(--border)}
-.back-btn{border:0;background:none;color:var(--green);font-size:18px}
-.user-line{display:flex;align-items:center;gap:10px}
-@media(min-width:650px){.grid2{grid-template-columns:repeat(4,1fr)}}
+body{
+  font-family:Tahoma,Arial,sans-serif;
+  background:#121212;color:#eee;
+  margin:0;padding:15px;
+}
+.container{max-width:850px;margin:auto}
+header{
+  text-align:center;padding:20px;
+  background:#1e1e1e;border-radius:12px;
+  border:1px solid #493b16;margin-bottom:15px;
+}
+h1,h2{color:#ffc107}
+h1{margin:5px}
+.section{
+  background:#202020;padding:16px;
+  border-radius:12px;margin-bottom:18px;
+  border:1px solid #383838;
+}
+input,select,textarea,button{
+  width:100%;padding:12px;margin:7px 0;
+  border-radius:7px;border:1px solid #444;
+  background:#303030;color:white;font-size:15px;
+}
+button{
+  background:#ffc107;color:#151515;
+  font-weight:bold;border:none;cursor:pointer;
+}
+button:disabled{opacity:.5;cursor:not-allowed}
+button:hover{background:#e5ad00}
+.status{text-align:center;color:#4caf50;font-weight:bold}
+.muted{color:#aaa;font-size:13px}
+.chat-box{
+  height:280px;overflow-y:auto;
+  padding:12px;background:#111;
+  border:1px solid #383838;border-radius:8px;
+}
+.msg{
+  background:#252525;padding:10px;
+  border-radius:9px;margin:8px 0;
+  overflow-wrap:anywhere;
+}
+.msg.mine{border-right:3px solid #ffc107}
+.msg.other{border-right:3px solid #4caf50}
+.msg b{color:#ffc107}
+.msg small{display:block;color:#999;margin-top:6px}
+.row{display:flex;gap:8px;align-items:center}
+.row button{width:auto;min-width:90px}
+.hidden{display:none!important}
+#loginSection{max-width:500px;margin:30px auto}
+.badge{
+  display:inline-block;background:#493b16;
+  color:#ffc107;padding:5px 10px;
+  border-radius:20px;font-size:12px;
+}
+hr{border:0;border-top:1px solid #444;margin:15px 0}
 </style>
 </head>
-<body>
 
-<header class="topbar">
- <div class="brand">
-  <div class="brand-logo">☪</div>
-  <div><h1>الدولة العثمانية</h1><small>المنصة الرقمية الرسمية</small></div>
- </div>
- <div class="top-actions">
-  <button onclick="showPage('chats')" aria-label="المحادثات"><i class="fa-regular fa-comment-dots"></i></button>
-  <button onclick="showPage('profile')" aria-label="حسابي"><i class="fa-regular fa-user"></i></button>
- </div>
+<body>
+<div class="container">
+
+<header>
+  <div class="badge">منصة المواطنين الرسمية</div>
+  <h1>الدولة العثمانية</h1>
+  <p class="muted">منصة التواصل والمواطنين وديوان الوزارات</p>
 </header>
 
-<main class="container">
-
-<section id="home" class="page active">
- <div class="hero">
-  <div class="small">مرحباً بك في منصتك الرقمية</div>
-  <h2>الدولة العثمانية</h2>
-  <p>مجتمع رقمي يجمع المواطنين والوزارات في مكان واحد. تواصل وشارك وساهم في تطوير الدولة.</p>
-  <button class="btn btn-gold" onclick="showPage('chats')">افتح محادثاتك <i class="fa-solid fa-arrow-left"></i></button>
- </div>
- <div class="section-title"><h3>الوزارات الرسمية</h3></div>
- <div class="grid2" id="homeMinistries"></div>
- <div class="section-title"><h3>خدمات التواصل</h3></div>
- <div class="card">
-  <button class="btn btn-green btn-block" onclick="showPage('chats')">💬 المحادثات الخاصة</button>
-  <div class="divider"></div>
-  <button class="btn btn-light btn-block" onclick="showPage('ministries')">🏛️ التواصل مع الوزارات</button>
-  <div class="divider"></div>
-  <button class="btn btn-light btn-block" onclick="showPage('people')">👥 البحث عن المواطنين</button>
- </div>
- <p class="muted">عدد الحسابات المسجلة على هذا الجهاز: <strong id="userCount">0</strong></p>
+<!-- تسجيل الدخول -->
+<section class="section" id="loginSection">
+  <h2>تسجيل الدخول</h2>
+  <input id="usernameInput" maxlength="30"
+         placeholder="اكتب اسم المواطن">
+  <button id="loginButton" onclick="handleLogin()">
+    دخول إلى الدولة
+  </button>
+  <p class="muted" id="loginInfo">
+    اختر اسمك للدخول إلى المنصة.
+  </p>
 </section>
 
-<section id="chats" class="page">
- <div class="section-title"><h3>محادثاتي</h3><span class="badge">خاصة</span></div>
- <div class="card">
-  <button class="btn btn-green btn-block" onclick="showPage('people')">＋ بدء محادثة جديدة</button>
- </div>
- <div id="chatList"></div>
+<!-- لوحة المواطن -->
+<div id="mainApp" class="hidden">
+
+<section class="section">
+  <h2>بطاقة المواطن</h2>
+  <p id="userStatus" class="status"></p>
+  <p class="muted">معرف الحساب:</p>
+  <p id="userIdDisplay" style="direction:ltr;text-align:center;font-size:12px"></p>
+  <button onclick="refreshCitizens()">تحديث قائمة المواطنين</button>
 </section>
 
-<section id="people" class="page">
- <div class="section-title"><h3>البحث عن المواطنين</h3></div>
- <div class="card">
-  <label>ابحث باسم المواطن</label>
-  <input id="searchPeople" class="input" placeholder="اكتب اسم الشخص..." oninput="renderPeople()">
-  <p class="muted">يمكنك بدء محادثة خاصة مع أي مواطن مسجل على المنصة.</p>
- </div>
- <div id="peopleList"></div>
-</section>
+<!-- المحادثات الخاصة -->
+<section class="section">
+  <h2>المحادثات الخاصة</h2>
+  <p class="muted">
+    اختر مواطنًا لفتح محادثة خاصة بينكما. لن تظهر رسائلكما لبقية المواطنين.
+  </p>
 
-<section id="privateChat" class="page">
- <div class="chat-header">
-  <button class="back-btn" onclick="showPage('chats')"><i class="fa-solid fa-arrow-right"></i></button>
-  <div class="avatar" id="privateAvatar">؟</div>
-  <div style="flex:1"><strong id="privateName">المحادثة</strong><br><span class="muted">محادثة خاصة بينكما فقط</span></div>
-  <span class="badge">خاصة</span>
- </div>
- <div id="privateMessages" class="chat-box" style="margin-top:10px"></div>
- <div class="chat-compose">
-  <button class="icon-btn" id="privateMic" onclick="toggleRecording('private')" title="تسجيل صوت"><i class="fa-solid fa-microphone"></i></button>
-  <textarea id="privateText" class="input" placeholder="اكتب رسالتك..." rows="1"></textarea>
-  <button class="icon-btn" onclick="sendPrivate()"><i class="fa-solid fa-paper-plane"></i></button>
- </div>
- <p class="muted" id="privateRecordingStatus"></p>
-</section>
+  <select id="citizenSelect" onchange="changeConversation()">
+    <option value="">اختر المواطن الذي تريد مراسلته</option>
+  </select>
 
-<section id="ministries" class="page">
- <div class="section-title"><h3>وزارات الدولة العثمانية</h3></div>
- <p class="muted">كل وزارة لها صندوق محادثات مستقل. رسالتك لا تظهر للمواطنين الآخرين.</p>
- <div id="ministryList"></div>
-</section>
+  <div id="privateChatArea" class="hidden">
+    <p id="conversationTitle" class="status"></p>
 
-<section id="ministryChat" class="page">
- <div class="chat-header">
-  <button class="back-btn" onclick="showPage('ministries')"><i class="fa-solid fa-arrow-right"></i></button>
-  <div class="room-icon"><i class="fa-solid fa-landmark"></i></div>
-  <div style="flex:1"><strong id="ministryChatTitle">الوزارة</strong><br><span class="muted" id="ministryChatSubtitle">التواصل الرسمي</span></div>
-  <span class="badge">رسمي</span>
- </div>
- <div id="ministryThreads" style="display:none"></div>
- <div id="ministryMessages" class="chat-box" style="margin-top:10px"></div>
- <div class="chat-compose" id="ministryComposer">
-  <button class="icon-btn" id="ministryMic" onclick="toggleRecording('ministry')" title="تسجيل صوت"><i class="fa-solid fa-microphone"></i></button>
-  <textarea id="ministryText" class="input" placeholder="اكتب رسالتك للوزارة..." rows="1"></textarea>
-  <button class="icon-btn" onclick="sendMinistry()"><i class="fa-solid fa-paper-plane"></i></button>
- </div>
- <p class="muted" id="ministryRecordingStatus"></p>
-</section>
+    <div class="chat-box" id="chatBox">
+      <p class="muted">جاري تحميل المحادثة...</p>
+    </div>
 
-<section id="profile" class="page">
- <div class="section-title"><h3>بطاقة المواطن</h3></div>
- <div class="card">
-  <div class="user-line">
-   <div class="avatar" id="profileAvatar">؟</div>
-   <div><strong id="profileName">المواطن</strong><br><span id="profileRole" class="badge">مواطن</span></div>
+    <div class="row">
+      <input id="messageInput" maxlength="5000"
+             placeholder="اكتب رسالتك..."
+             onkeydown="if(event.key==='Enter')sendMessage()">
+      <button onclick="sendMessage()">إرسال</button>
+    </div>
   </div>
-  <div class="divider"></div>
-  <p class="muted">اسم الحساب: <strong id="profileUsername"></strong></p>
-  <p class="muted">نوع الحساب: <strong id="profileType"></strong></p>
- </div>
- <div class="card">
-  <h3 style="font-size:14px">تسجيل الدخول</h3>
-  <p class="muted">لتجربة حساب آخر على هذا الجهاز، سجل الخروج ثم ادخل بالاسم الآخر.</p>
-  <button class="btn btn-red btn-block" onclick="logout()">تسجيل الخروج</button>
- </div>
- <div class="card">
-  <h3 style="font-size:13px">معلومات مهمة</h3>
-  <p class="muted" style="line-height:2">هذه نسخة تجريبية تحفظ البيانات محلياً على الجهاز. لا تستخدمها لتبادل معلومات حساسة. يلزم ربطها بسيرفر لتعمل المحادثات بين أجهزة مختلفة.</p>
- </div>
 </section>
 
-</main>
+<!-- ديوان الوزارات -->
+<section class="section">
+  <h2>ديوان الوزارات</h2>
+  <p class="muted">
+    هذه مساحة مشتركة لرسائل المواطنين إلى الديوان.
+  </p>
 
-<nav class="bottom-nav">
- <button class="nav-item active" data-page="home" onclick="showPage('home')"><i class="fa-solid fa-house"></i>الرئيسية</button>
- <button class="nav-item" data-page="chats" onclick="showPage('chats')"><i class="fa-solid fa-comments"></i>الشاتات</button>
- <button class="nav-item" data-page="ministries" onclick="showPage('ministries')"><i class="fa-solid fa-landmark"></i>الوزارات</button>
- <button class="nav-item" data-page="people" onclick="showPage('people')"><i class="fa-solid fa-users"></i>المواطنون</button>
- <button class="nav-item" data-page="profile" onclick="showPage('profile')"><i class="fa-solid fa-id-card"></i>حسابي</button>
-</nav>
-<div id="toast" class="toast"></div>
+  <select id="ministrySelect">
+    <option value="elections_main">ديوان الانتخابات</option>
+    <option value="interior">وزارة الداخلية</option>
+    <option value="education">وزارة التعليم</option>
+    <option value="health">وزارة الصحة</option>
+    <option value="finance">وزارة المالية</option>
+  </select>
+
+  <div class="chat-box" id="ministryBox"></div>
+
+  <input id="ministryInput" maxlength="5000"
+         placeholder="اكتب رسالتك إلى الديوان..."
+         onkeydown="if(event.key==='Enter')sendMinistryAction()">
+
+  <button onclick="sendMinistryAction()">إرسال إلى الديوان</button>
+</section>
+
+</div>
+</div>
 
 <script>
-// إعداد اتصال Supabase
-const SUPABASE_URL = "https://trtaoqezskrtswcsboyi.supabase.co";
-const SUPABASE_KEY = "sb_publishable_oN7eayfaJ9NnF82IIIDqxw_5TfJ5ph1";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+"use strict";
 
-const MINISTER_USERNAMES = {
- environment: "وزير البيئة",
- social: "وزير التكافل",
- activities: "وزير الأنشطة",
- media: "وزير التطوير"
-};
+// ======================================
+// إعداد Supabase
+// ======================================
 
-const ministries=[
- {id:"environment",name:"وزارة البيئة والخدمات",icon:"fa-leaf",minister:MINISTER_USERNAMES.environment},
- {id:"social",name:"وزارة التكافل الاجتماعي",icon:"fa-hand-holding-heart",minister:MINISTER_USERNAMES.social},
- {id:"activities",name:"وزارة الأنشطة والتعاون",icon:"fa-people-group",minister:MINISTER_USERNAMES.activities},
- {id:"media",name:"وزارة الإعلام والتطوير",icon:"fa-laptop-code",minister:MINISTER_USERNAMES.media}
-];
+const SUPABASE_URL =
+'https://trtaoqezskrtswcsboyi.supabase.co';
 
-const DB={
- users:"ottoman_v2_users",
- current:"ottoman_v2_current",
- private:"ottoman_v2_private",
- ministry:"ottoman_v2_ministry"
-};
+const SUPABASE_KEY =
+'sb_publishable_oN7eayfaJ9NnF82IIIDqxw_5TfJ5ph1';
 
-let currentUser=null;
-let activeFriend=null;
-let activeMinistry=null;
-let recording=null;
-let recordingTarget=null;
-let mediaRecorder=null;
-let audioChunks=[];
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-function read(key,fallback){
- try{return JSON.parse(localStorage.getItem(key))??fallback}
- catch(e){return fallback}
+// ======================================
+// بيانات المستخدم
+// ======================================
+
+let currentUser = null;
+let currentUsername = null;
+let selectedCitizen = null;
+
+let privateChannel = null;
+let ministryChannel = null;
+
+let lastPrivateMessageId = null;
+let lastMinistryMessageId = null;
+
+const $ = id => document.getElementById(id);
+
+function showError(error, message) {
+  console.error(message, error);
+  alert(message + (error?.message ? "\n" + error.message : ""));
 }
-function write(key,value){localStorage.setItem(key,JSON.stringify(value))}
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,9)}
-function cleanName(s){return String(s||"").trim().replace(/\s+/g," ").slice(0,30)}
-function esc(s){
- return String(s??"").replace(/[&<>"']/g,c=>({
- "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[c]));
+
+function safeText(element, value) {
+  element.textContent = value ?? "";
 }
-function toast(message){
- const el=document.getElementById("toast");
- el.textContent=message;
- el.style.display="block";
- clearTimeout(window.toastTimer);
- window.toastTimer=setTimeout(()=>el.style.display="none",2600);
-}
-function getUsers(){return read(DB.users,[])}
-function saveUsers(users){write(DB.users,users)}
-function getUserById(id){return getUsers().find(u=>u.id===id)}
-function getMinisterForUser(user){
- if(!user)return null;
- return ministries.find(m=>m.minister.toLowerCase()===user.username.toLowerCase())||null;
-}
-function isMinister(){return !!getMinisterForUser(currentUser)}
-function requireLogin(){
- if(currentUser)return true;
- login();
- return !!currentUser;
-}
-function login(){
- const name=cleanName(prompt("اكتب اسمك للدخول إلى الدولة العثمانية:"));
- if(!name)return;
- const users=getUsers();
- let user=users.find(u=>u.username.toLowerCase()===name.toLowerCase());
- if(!user){
-  user={id:uid(),username:name,created:Date.now()};
-  users.push(user);
-  saveUsers(users);
- }
- currentUser=user;
- localStorage.setItem(DB.current,user.id);
- renderAll();
- toast("أهلاً بك يا "+name);
-}
-function logout(){
- if(!confirm("هل تريد تسجيل الخروج؟"))return;
- currentUser=null;
- localStorage.removeItem(DB.current);
- showPage("home");
- renderAll();
- toast("تم تسجيل الخروج من هذا الجهاز");
-}
-function showPage(id){
- const protectedPages=["chats","people","privateChat","ministries","ministryChat","profile"];
- if(protectedPages.includes(id)&&!requireLogin())return;
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- document.querySelectorAll(".nav-item").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
- if(id==="home")renderHome();
- if(id==="chats")renderChatList();
- if(id==="people")renderPeople();
- if(id==="ministries")renderMinistries();
- if(id==="profile")renderProfile();
- if(id==="privateChat")renderPrivateMessages();
- if(id==="ministryChat")renderMinistryChat();
- window.scrollTo(0,0);
-}
-function renderAll(){
- renderHome();
- renderChatList();
- renderPeople();
- renderMinistries();
- renderProfile();
-}
-function renderHome(){
- document.getElementById("userCount").textContent=getUsers().length;
- document.getElementById("homeMinistries").innerHTML=ministries.map(m=>`
-  <div class="ministry">
-   <div class="mi"><i class="fa-solid ${m.icon}"></i></div>
-   <h4>${esc(m.name)}</h4>
-   <p>التواصل الرسمي مع الوزارة</p>
-   <button class="btn btn-light" onclick="openMinistry('${m.id}')">دخول</button>
-  </div>`).join("");
-}
-function privateKey(a,b){return [a,b].sort().join("__")}
-function getPrivate(){return read(DB.private,{})}
-function getMinistryDB(){return read(DB.ministry,{})}
-function openPrivate(friendId){
- if(!requireLogin())return;
- const friend=getUserById(friendId);
- if(!friend||friend.id===currentUser.id)return;
- if(getMinisterForUser(friend)){
-  toast("لا يمكن مراسلة الوزير على الخاص. استخدم صفحة الوزارة.");
-  return;
- }
- if(isMinister()){
-  toast("حساب الوزير مخصص للرد من خلال صفحة الوزارة فقط.");
-  return;
- }
- activeFriend=friend;
- document.getElementById("privateAvatar").textContent=friend.username.charAt(0);
- document.getElementById("privateName").textContent=friend.username;
- showPage("privateChat");
-}
-function renderPeople(){
- const el=document.getElementById("peopleList");
- if(!currentUser){el.innerHTML='<div class="empty">سجل الدخول أولاً.</div>';return}
- const query=(document.getElementById("searchPeople").value||"").trim().toLowerCase();
- const users=getUsers().filter(u=>u.id!==currentUser.id&&!getMinisterForUser(u)&&u.username.toLowerCase().includes(query));
- el.innerHTML=users.map(u=>`
-  <div class="room">
-   <div class="avatar">${esc(u.username.charAt(0))}</div>
-   <div class="room-info"><strong>${esc(u.username)}</strong><small>مواطن في الدولة العثمانية</small></div>
-   <button class="btn btn-green" onclick="openPrivate('${u.id}')">مراسلة</button>
-  </div>`).join("")||'<div class="card empty">لا يوجد مواطنون مطابقون للبحث. يمكن تجربة حساب آخر على هذا الجهاز.</div>';
-}
-function renderChatList(){
- const el=document.getElementById("chatList");
- if(!currentUser){el.innerHTML='<div class="empty">سجل الدخول لعرض محادثاتك.</div>';return}
- if(isMinister()){
-  el.innerHTML='<div class="card"><h3 style="font-size:14px">حسابك حساب وزاري</h3><p class="muted">لا توجد لديك محادثات خاصة. يمكنك الرد على المواطنين من خلال صندوق رسائل وزارتك فقط.</p><button class="btn btn-green btn-block" onclick="openMinistry(\''+getMinisterForUser(currentUser).id+'\')">فتح صندوق الوزارة</button></div>';
-  return;
- }
- const data=getPrivate();
- const rows=[];
- Object.keys(data).forEach(key=>{
-  if(!key.split("__").includes(currentUser.id))return;
-  const otherId=key.split("__").find(id=>id!==currentUser.id);
-  const other=getUserById(otherId);
-  if(!other)return;
-  const msgs=data[key]||[];
-  const last=msgs[msgs.length-1];
-  rows.push({other,last,key});
- });
- rows.sort((a,b)=>(b.last?.time||0)-(a.last?.time||0));
- el.innerHTML=rows.map(r=>`
-  <div class="room" onclick="openPrivate('${r.other.id}')">
-   <div class="avatar">${esc(r.other.username.charAt(0))}</div>
-   <div class="room-info"><strong>${esc(r.other.username)}</strong><small>${esc(r.last?.audio?"🎤 رسالة صوتية":r.last?.text||"ابدأ المحادثة")}</small></div>
-   <i class="fa-solid fa-chevron-left muted"></i>
-  </div>`).join("")||'<div class="card empty">لا توجد محادثات بعد. ابدأ محادثة مع أحد المواطنين.</div>';
-}
-function addMessageHTML(message){
- if(message.audio){
-  return `<audio controls preload="none" src="${message.audio}"></audio>`;
- }
- return esc(message.text).replace(/\n/g,"<br>");
-}
-function messageHTML(m){
- const mine=m.sender===currentUser.id;
- const sender=getUserById(m.sender);
- const label=mine?"أنت":(sender?sender.username:"الوزارة");
- return `<div class="msg ${mine?"mine":""}">
-  ${addMessageHTML(m)}
-  <small>${esc(label)} · ${new Date(m.time).toLocaleTimeString("ar-EG",{hour:"2-digit",minute:"2-digit"})}</small>
- </div>`;
-}
-function scrollChat(id){
- const box=document.getElementById(id);
- box.scrollTop=box.scrollHeight;
-}
-function renderPrivateMessages(){
- if(!activeFriend)return;
- const key=privateKey(currentUser.id,activeFriend.id);
- const msgs=getPrivate()[key]||[];
- document.getElementById("privateMessages").innerHTML=msgs.map(messageHTML).join("")||'<div class="empty">ابدأ المحادثة الآن مع '+esc(activeFriend.username)+'</div>';
- scrollChat("privateMessages");
-}
-function sendPrivate(){
- const txt=document.getElementById("privateText").value.trim();
- if(!txt||!activeFriend)return;
- const key=privateKey(currentUser.id,activeFriend.id);
- const db=getPrivate();
- if(!db[key])db[key]=[];
- db[key].push({sender:currentUser.id,text:txt,time:Date.now()});
- write(DB.private,db);
- document.getElementById("privateText").value="";
- renderPrivateMessages();
- renderChatList();
-}
-function openMinistry(id){
- if(!requireLogin())return;
- activeMinistry=ministries.find(m=>m.id===id);
- if(!activeMinistry)return;
- document.getElementById("ministryChatTitle").textContent=activeMinistry.name;
- document.getElementById("ministryChatSubtitle").textContent=isMinister()?"صندوق الرد الوزاري":"التواصل الرسمي مع الوزارة";
- showPage("ministryChat");
- renderMinistryChat();
-}
-function renderMinistries(){
- document.getElementById("ministryList").innerHTML=ministries.map(m=>`
-  <div class="room" onclick="openMinistry('${m.id}')">
-   <div class="room-icon"><i class="fa-solid ${m.icon}"></i></div>
-   <div class="room-info"><strong>${esc(m.name)}</strong><small>الوزير المسؤول: ${esc(m.minister)}</small></div>
-   <button class="btn btn-green">فتح الصندوق</button>
-  </div>`).join("");
-}
-function renderMinistryChat(){
- if(!activeMinistry)return;
- const db=getMinistryDB();
- const ministryId=activeMinistry.id;
- if(!db[ministryId])db[ministryId]={};
- const box=document.getElementById("ministryMessages");
- const threadsEl=document.getElementById("ministryThreads");
- 
- if(isMinister()){
-  threadsEl.style.display="block";
-  const usersMap={};
-  Object.keys(db[ministryId]).forEach(userId=>{
-   const msgs=db[ministryId][userId]||[];
-   if(msgs.length>0)usersMap[userId]=msgs[msgs.length-1];
+
+function formatDate(value) {
+  return new Date(value).toLocaleString("ar-EG", {
+    dateStyle:"short",
+    timeStyle:"short"
   });
-  const citizenIds=Object.keys(usersMap);
-  threadsEl.innerHTML='<div class="card"><h3 style="font-size:13px;margin-bottom:8px">رسائل المواطنين للوزارة</h3>'+
-   (citizenIds.length?citizenIds.map(uid=>{
-    const citizen=getUserById(uid);
-    const last=usersMap[uid];
-    return `<div class="room" onclick="selectMinistryUser('${uid}')">
-     <div class="avatar">${esc((citizen?.username||"م").charAt(0))}</div>
-     <div class="room-info"><strong>${esc(citizen?.username||"مواطن")}</strong><small>${esc(last.text||"رسالة صوتية")}</small></div>
-    </div>`;
-   }).join(""):'<div class="muted">لا توجد رسائل من مواطنين حتى الآن.</div>')+'</div>';
+}
 
-  if(!window.activeMinistryUser&&citizenIds.length>0){
-   window.activeMinistryUser=citizenIds[0];
+// ======================================
+// تشغيل المنصة
+// ======================================
+
+window.addEventListener("load", initialize);
+
+async function initialize() {
+  const {data,error} = await db.auth.getSession();
+
+  if(error) {
+    showError(error,"تعذر فحص تسجيل الدخول");
+    return;
   }
-  if(window.activeMinistryUser){
-   const targetUser=getUserById(window.activeMinistryUser);
-   const msgs=db[ministryId][window.activeMinistryUser]||[];
-   box.innerHTML=msgs.map(messageHTML).join("")||'<div class="empty">اختر مواطناً من القائمة لعرض المحادثة والرد عليه.</div>';
-  }else{
-   box.innerHTML='<div class="empty">لا توجد محادثات نشطة مع مواطنين.</div>';
+
+  if(data.session) {
+    currentUser = data.session.user;
+    await restoreUser();
   }
- }else{
-  threadsEl.style.display="none";
-  const userId=currentUser.id;
-  const msgs=db[ministryId][userId]||[];
-  box.innerHTML=msgs.map(messageHTML).join("")||'<div class="empty">ابدأ بإرسال رسالتك الرسمية إلى الوزارة.</div>';
- }
- scrollChat("ministryMessages");
 }
-function selectMinistryUser(uid){
- window.activeMinistryUser=uid;
- renderMinistryChat();
-}
-function sendMinistry(){
- const txt=document.getElementById("ministryText").value.trim();
- if(!txt||!activeMinistry)return;
- const db=getMinistryDB();
- const ministryId=activeMinistry.id;
- if(!db[ministryId])db[ministryId]={};
- 
- let targetUser=currentUser.id;
- if(isMinister()){
-  if(!window.activeMinistryUser){
-   toast("اختر مواطناً للرد عليه أولاً");
-   return;
+
+async function restoreUser() {
+  const {data,error} = await db
+    .from("users")
+    .select("id,username")
+    .eq("id",currentUser.id)
+    .maybeSingle();
+
+  if(error) {
+    showError(error,"تعذر تحميل بيانات المواطن");
+    return;
   }
-  targetUser=window.activeMinistryUser;
- }
- if(!db[ministryId][targetUser])db[ministryId][targetUser]=[];
- db[ministryId][targetUser].push({sender:currentUser.id,text:txt,time:Date.now()});
- write(DB.ministry,db);
- document.getElementById("ministryText").value="";
- renderMinistryChat();
+
+  if(!data) {
+    $("loginSection").classList.remove("hidden");
+    $("loginInfo").textContent =
+      "اكتب اسم المواطن لإكمال تسجيل الدخول.";
+    return;
+  }
+
+  currentUsername = data.username;
+  await enterPlatform();
 }
-function toggleRecording(target){
- toast("خاصية التسجيل الصوتى جاهزة");
+
+// ======================================
+// تسجيل الدخول
+// ======================================
+
+async function handleLogin() {
+  const name = $("usernameInput").value.trim();
+
+  if(!name) {
+    alert("اكتب اسم المواطن أولاً");
+    return;
+  }
+
+  if(name.length < 2 || name.length > 30) {
+    alert("الاسم يجب أن يكون بين حرفين و30 حرفاً");
+    return;
+  }
+
+  $("loginButton").disabled = true;
+
+  try {
+    let sessionResult = await db.auth.getSession();
+
+    if(sessionResult.error) throw sessionResult.error;
+
+    if(sessionResult.data.session) {
+      currentUser = sessionResult.data.session.user;
+    } else {
+      const result = await db.auth.signInAnonymously();
+
+      if(result.error) throw result.error;
+
+      currentUser = result.data.user;
+    }
+
+    const {error} = await db.from("users").upsert({
+      id:currentUser.id,
+      username:name
+    },{onConflict:"id"});
+
+    if(error) throw error;
+
+    currentUsername = name;
+
+    await enterPlatform();
+
+  } catch(error) {
+    showError(error,"تعذر تسجيل الدخول. تحقق من إعدادات Supabase.");
+  } finally {
+    $("loginButton").disabled = false;
+  }
 }
-function renderProfile(){
- if(!currentUser)return;
- document.getElementById("profileAvatar").textContent=currentUser.username.charAt(0);
- document.getElementById("profileName").textContent=currentUser.username;
- document.getElementById("profileUsername").textContent=currentUser.username;
- document.getElementById("profileType").textContent=isMinister()?"وزير مسؤول":"مواطن";
+
+// ======================================
+// دخول لوحة المواطن
+// ======================================
+
+async function enterPlatform() {
+  $("loginSection").classList.add("hidden");
+  $("mainApp").classList.remove("hidden");
+
+  safeText($("userStatus"),"مرحباً بك يا " + currentUsername);
+  safeText($("userIdDisplay"),currentUser.id);
+
+  await refreshCitizens();
+  await loadMinistryMessages();
+  subscribePrivateMessages();
+  subscribeMinistryMessages();
 }
-renderAll();
-const savedId=localStorage.getItem(DB.current);
-if(savedId){
- const found=getUserById(savedId);
- if(found){currentUser=found;renderAll();}
+
+// ======================================
+// قائمة المواطنين
+// ======================================
+
+async function refreshCitizens() {
+  if(!currentUser) return;
+
+  const select = $("citizenSelect");
+
+  const oldValue = selectedCitizen;
+
+  const {data,error} = await db
+    .from("users")
+    .select("id,username")
+    .neq("id",currentUser.id)
+    .order("username");
+
+  if(error) {
+    showError(error,"تعذر تحميل قائمة المواطنين");
+    return;
+  }
+
+  select.replaceChildren();
+
+  const first = document.createElement("option");
+  first.value = "";
+  first.textContent = "اختر المواطن الذي تريد مراسلته";
+  select.appendChild(first);
+
+  for(const citizen of data || []) {
+    const option = document.createElement("option");
+    option.value = citizen.id;
+    option.textContent = citizen.username;
+    select.appendChild(option);
+  }
+
+  if(oldValue && (data || []).some(x => x.id === oldValue)) {
+    select.value = oldValue;
+  } else {
+    selectedCitizen = null;
+    $("privateChatArea").classList.add("hidden");
+  }
 }
+
+// ======================================
+// اختيار محادثة خاصة
+// ======================================
+
+async function changeConversation() {
+  selectedCitizen = $("citizenSelect").value || null;
+
+  if(!selectedCitizen) {
+    $("privateChatArea").classList.add("hidden");
+    return;
+  }
+
+  const name = $("citizenSelect")
+    .selectedOptions[0].textContent;
+
+  safeText($("conversationTitle"),"محادثة خاصة مع " + name);
+
+  $("privateChatArea").classList.remove("hidden");
+
+  await loadChatMessages();
+}
+
+// ======================================
+// عرض الرسائل بطريقة آمنة
+// ======================================
+
+function appendMessage(box,message,isMine) {
+  const item = document.createElement("div");
+
+  item.className = "msg " + (isMine ? "mine" : "other");
+
+  const sender = document.createElement("b");
+  sender.textContent = message.sender_name || "مواطن";
+
+  const content = document.createElement("div");
+  content.textContent = message.text;
+
+  const time = document.createElement("small");
+  time.textContent = formatDate(message.created_at);
+
+  item.appendChild(sender);
+  item.appendChild(content);
+  item.appendChild(time);
+
+  box.appendChild(item);
+}
+
+// ======================================
+// تحميل المحادثة الخاصة
+// ======================================
+
+async function loadChatMessages() {
+  if(!selectedCitizen || !currentUser) return;
+
+  const box = $("chatBox");
+  box.replaceChildren();
+
+  const first = document.createElement("p");
+  first.className = "muted";
+  first.textContent = "جاري تحميل الرسائل...";
+  box.appendChild(first);
+
+  const me = currentUser.id;
+  const other = selectedCitizen;
+
+  const {data,error} = await db
+    .from("private_messages")
+    .select("*")
+    .or(
+      `and(sender_id.eq.${me},receiver_id.eq.${other}),and(sender_id.eq.${other},receiver_id.eq.${me})`
+    )
+    .order("created_at",{ascending:true});
+
+  if(error) {
+    showError(error,"تعذر تحميل المحادثة");
+    return;
+  }
+
+  box.replaceChildren();
+
+  for(const message of data || []) {
+    appendMessage(
+      box,
+      {
+        ...message,
+        sender_name: message.sender_id === me
+          ? currentUsername
+          : $("citizenSelect").selectedOptions[0].textContent
+      },
+      message.sender_id === me
+    );
+  }
+
+  if(!data || data.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "muted";
+    empty.textContent = "لا توجد رسائل بعد. ابدأ المحادثة الآن!";
+    box.appendChild(empty);
+  }
+
+  lastPrivateMessageId = data?.length
+    ? data[data.length-1].id
+    : null;
+
+  box.scrollTop = box.scrollHeight;
+}
+
+// ======================================
+// إرسال رسالة خاصة
+// ======================================
+
+async function sendMessage() {
+  if(!currentUser) {
+    alert("سجل الدخول أولاً");
+    return;
+  }
+
+  if(!selectedCitizen) {
+    alert("اختر مواطناً أولاً");
+    return;
+  }
+
+  const input = $("messageInput");
+  const message = input.value.trim();
+
+  if(!message) return;
+
+  if(message.length > 5000) {
+    alert("الرسالة طويلة جداً");
+    return;
+  }
+
+  input.disabled = true;
+
+  try {
+    const {error} = await db
+      .from("private_messages")
+      .insert({
+        sender_id:currentUser.id,
+        receiver_id:selectedCitizen,
+        text:message
+      });
+
+    if(error) throw error;
+
+    input.value = "";
+
+  } catch(error) {
+    showError(error,"تعذر إرسال الرسالة");
+  } finally {
+    input.disabled = false;
+    input.focus();
+  }
+}
+
+// ======================================
+// استقبال الرسائل الخاصة لحظياً
+// ======================================
+
+function subscribePrivateMessages() {
+  if(privateChannel) {
+    db.removeChannel(privateChannel);
+    privateChannel = null;
+  }
+
+  privateChannel = db
+    .channel("private_messages_" + currentUser.id)
+    .on(
+      "postgres_changes",
+      {
+        event:"INSERT",
+        schema:"public",
+        table:"private_messages"
+      },
+      async payload => {
+        const m = payload.new;
+
+        const belongsToMe =
+          m.sender_id === currentUser.id ||
+          m.receiver_id === currentUser.id;
+
+        if(!belongsToMe) return;
+
+        if(
+          selectedCitizen &&
+          (
+            (m.sender_id === currentUser.id &&
+             m.receiver_id === selectedCitizen) ||
+            (m.sender_id === selectedCitizen &&
+             m.receiver_id === currentUser.id)
+          )
+        ) {
+          // إعادة التحميل تمنع تكرار الرسائل
+          await loadChatMessages();
+        }
+      }
+    )
+    .subscribe(status => {
+      console.log("Private chat:",status);
+    });
+}
+
+// ======================================
+// ديوان الوزارات
+// ======================================
+
+async function loadMinistryMessages() {
+  const ministry = $("ministrySelect").value;
+  const box = $("ministryBox");
+
+  box.replaceChildren();
+
+  const {data,error} = await db
+    .from("ministry_messages")
+    .select("*")
+    .eq("ministry_id",ministry)
+    .order("created_at",{ascending:true});
+
+  if(error) {
+    showError(error,"تعذر تحميل رسائل الديوان");
+    return;
+  }
+
+  for(const m of data || []) {
+    appendMessage(
+      box,
+      {
+        ...m,
+        sender_name:m.sender_id
+      },
+      m.user_id === currentUser.id
+    );
+  }
+
+  lastMinistryMessageId = data?.length
+    ? data[data.length-1].id
+    : null;
+
+  if(!data || data.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "muted";
+    empty.textContent = "لا توجد رسائل في هذا الديوان.";
+    box.appendChild(empty);
+  }
+
+  box.scrollTop = box.scrollHeight;
+}
+
+// ======================================
+// تغيير الوزارة
+// ======================================
+
+$("ministrySelect").addEventListener("change",async () => {
+  await loadMinistryMessages();
+});
+
+// ======================================
+// إرسال رسالة للوزارة
+// ======================================
+
+async function sendMinistryAction() {
+  if(!currentUser) {
+    alert("سجل الدخول أولاً");
+    return;
+  }
+
+  const input = $("ministryInput");
+  const message = input.value.trim();
+  const ministry = $("ministrySelect").value;
+
+  if(!message) return;
+
+  input.disabled = true;
+
+  try {
+    const {error} = await db
+      .from("ministry_messages")
+      .insert({
+        ministry_id:ministry,
+        user_id:currentUser.id,
+        sender_id:currentUsername,
+        text:message
+      });
+
+    if(error) throw error;
+
+    input.value = "";
+
+  } catch(error) {
+    showError(error,"تعذر إرسال رسالة الوزارة");
+  } finally {
+    input.disabled = false;
+    input.focus();
+  }
+}
+
+// ======================================
+// استقبال رسائل الوزارات لحظياً
+// ======================================
+
+function subscribeMinistryMessages() {
+  if(ministryChannel) {
+    db.removeChannel(ministryChannel);
+    ministryChannel = null;
+  }
+
+  ministryChannel = db
+    .channel("ministry_messages_" + currentUser.id)
+    .on(
+      "postgres_changes",
+      {
+        event:"INSERT",
+        schema:"public",
+        table:"ministry_messages"
+      },
+      async payload => {
+        if(
+          payload.new.ministry_id ===
+          $("ministrySelect").value
+        ) {
+          await loadMinistryMessages();
+        }
+      }
+    )
+    .subscribe(status => {
+      console.log("Ministry channel:",status);
+    });
+}
+
 </script>
 </body>
 </html>
