@@ -1,71 +1,174 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#121212">
-<title>الدولة العثمانية</title>
+<meta name="theme-color" content="#0d0d0d">
+<title>الدولة العثمانية | الديوان الرسمي</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
-body{
-  font-family:Tahoma,Arial,sans-serif;
-  background:#121212;color:#eee;
-  margin:0;padding:15px;
+:root {
+  --bg-main: #0d0d0d;
+  --bg-card: #161616;
+  --bg-input: #222222;
+  --border-gold: #c5a059;
+  --gold: #ffc107;
+  --gold-hover: #e0a800;
+  --text-main: #f3f3f3;
+  --text-muted: #aaaaaa;
 }
-.container{max-width:850px;margin:auto}
-header{
-  text-align:center;padding:20px;
-  background:#1e1e1e;border-radius:12px;
-  border:1px solid #493b16;margin-bottom:15px;
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: Tahoma, Arial, sans-serif;
+  background: var(--bg-main);
+  color: var(--text-main);
+  margin: 0;
+  padding: 20px;
 }
-h1,h2{color:#ffc107}
-h1{margin:5px}
-.section{
-  background:#202020;padding:16px;
-  border-radius:12px;margin-bottom:18px;
-  border:1px solid #383838;
+
+.container {
+  max-width: 850px;
+  margin: auto;
 }
-input,select,textarea,button{
-  width:100%;padding:12px;margin:7px 0;
-  border-radius:7px;border:1px solid #444;
-  background:#303030;color:white;font-size:15px;
+
+header {
+  text-align: center;
+  padding: 30px 20px;
+  background: linear-gradient(145deg, #181818, #111111);
+  border-radius: 16px;
+  border: 1px solid var(--border-gold);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+  margin-bottom: 25px;
 }
-button{
-  background:#ffc107;color:#151515;
-  font-weight:bold;border:none;cursor:pointer;
+
+h1, h2 {
+  color: var(--gold);
+  font-family: 'Times New Roman', serif;
 }
-button:disabled{opacity:.5;cursor:not-allowed}
-button:hover{background:#e5ad00}
-.status{text-align:center;color:#4caf50;font-weight:bold}
-.muted{color:#aaa;font-size:13px}
-.chat-box{
-  height:280px;overflow-y:auto;
-  padding:12px;background:#111;
-  border:1px solid #383838;border-radius:8px;
+
+h1 {
+  margin: 10px 0 5px 0;
+  font-size: 28px;
+  letter-spacing: 1px;
 }
-.msg{
-  background:#252525;padding:10px;
-  border-radius:9px;margin:8px 0;
-  overflow-wrap:anywhere;
+
+.section {
+  background: var(--bg-card);
+  padding: 22px;
+  border-radius: 16px;
+  margin-bottom: 22px;
+  border: 1px solid #2a2a2a;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  transition: border-color 0.3s ease;
 }
-.msg.mine{border-right:3px solid #ffc107}
-.msg.other{border-right:3px solid #4caf50}
-.msg b{color:#ffc107}
-.msg small{display:block;color:#999;margin-top:6px}
-.row{display:flex;gap:8px;align-items:center}
-.row button{width:auto;min-width:90px}
-.hidden{display:none!important}
-#loginSection{max-width:500px;margin:30px auto}
-.badge{
-  display:inline-block;background:#493b16;
-  color:#ffc107;padding:5px 10px;
-  border-radius:20px;font-size:12px;
+
+.section:hover {
+  border-color: rgba(197, 160, 89, 0.4);
 }
-hr{border:0;border-top:1px solid #444;margin:15px 0}
+
+input, select, textarea, button {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #333;
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--border-gold);
+  box-shadow: 0 0 8px rgba(197, 160, 89, 0.2);
+}
+
+button {
+  background: linear-gradient(135deg, #ffc107, #d49a00);
+  color: #111;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ffca2c, #e0a800);
+  transform: translateY(-1px);
+}
+
+.status {
+  text-align: center;
+  color: #4cd137;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.muted {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.chat-box {
+  height: 320px;
+  overflow-y: auto;
+  padding: 15px;
+  background: #0a0a0a;
+  border: 1px solid #222;
+  border-radius: 12px;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+}
+
+.msg {
+  background: #1c1c1c;
+  padding: 12px 15px;
+  border-radius: 10px;
+  margin: 10px 0;
+  overflow-wrap: anywhere;
+  border: 1px solid #262626;
+}
+
+.msg.mine { border-right: 4px solid var(--gold); }
+.msg.other { border-right: 4px solid #4cd137; }
+
+.msg b { color: var(--gold); font-size: 14px; }
+.msg small { display: block; color: #888; margin-top: 6px; font-size: 11px; }
+
+.row { display: flex; gap: 10px; align-items: center; }
+.row button { width: auto; min-width: 100px; margin: 0; }
+
+.hidden { display: none !important; }
+
+#loginSection {
+  max-width: 480px;
+  margin: 50px auto;
+  text-align: center;
+}
+
+.badge {
+  display: inline-block;
+  background: #252012;
+  color: var(--gold);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  border: 1px solid var(--border-gold);
+  letter-spacing: 0.5px;
+}
+
+hr { border: 0; border-top: 1px solid #2a2a2a; margin: 20px 0; }
 </style>
 </head>
 
@@ -73,40 +176,38 @@ hr{border:0;border-top:1px solid #444;margin:15px 0}
 <div class="container">
 
 <header>
-  <div class="badge">منصة المواطنين الرسمية</div>
+  <div class="badge">✦ الديوان السلطاني العثماني ✦</div>
   <h1>الدولة العثمانية</h1>
-  <p class="muted">منصة التواصل والمواطنين وديوان الوزارات</p>
+  <p class="muted">منصة التواصل الملكية وديوان الوزارات والمواطنين</p>
 </header>
 
 <!-- تسجيل الدخول -->
 <section class="section" id="loginSection">
   <h2>تسجيل الدخول</h2>
-  <input id="usernameInput" maxlength="30"
-         placeholder="اكتب اسم المواطن">
+  <p class="muted" style="margin-bottom: 15px;">أدخل اسمك الكريم للانضمام إلى سجلات المواطنين</p>
+  <input id="usernameInput" maxlength="30" placeholder="اكتب اسم المواطن...">
   <button id="loginButton" onclick="handleLogin()">
-    دخول إلى الدولة
+    دخول إلى أراضي الدولة
   </button>
-  <p class="muted" id="loginInfo">
-    اختر اسمك للدخول إلى المنصة.
-  </p>
+  <p class="muted" id="loginInfo" style="margin-top: 15px;"></p>
 </section>
 
 <!-- لوحة المواطن -->
 <div id="mainApp" class="hidden">
 
-<section class="section">
+<section class="section" style="text-align: center;">
   <h2>بطاقة المواطن</h2>
   <p id="userStatus" class="status"></p>
-  <p class="muted">معرف الحساب:</p>
-  <p id="userIdDisplay" style="direction:ltr;text-align:center;font-size:12px"></p>
-  <button onclick="refreshCitizens()">تحديث قائمة المواطنين</button>
+  <p class="muted">معرف الحساب الفريد:</p>
+  <p id="userIdDisplay" style="direction:ltr; font-size:11px; color:#777; background:#111; padding:6px; border-radius:6px; margin: 5px auto; max-width: 300px;"></p>
+  <button onclick="refreshCitizens()" style="max-width: 220px; margin: 10px auto 0 auto;">تحديث قائمة المواطنين</button>
 </section>
 
 <!-- المحادثات الخاصة -->
 <section class="section">
   <h2>المحادثات الخاصة</h2>
   <p class="muted">
-    اختر مواطنًا لفتح محادثة خاصة بينكما. لن تظهر رسائلكما لبقية المواطنين.
+    اختر مواطنًا لفتح قناة تواصل خاصة وآمنة بينكما بعيدًا عن العامة.
   </p>
 
   <select id="citizenSelect" onchange="changeConversation()">
@@ -114,15 +215,15 @@ hr{border:0;border-top:1px solid #444;margin:15px 0}
   </select>
 
   <div id="privateChatArea" class="hidden">
-    <p id="conversationTitle" class="status"></p>
+    <p id="conversationTitle" class="status" style="text-align: right; margin: 10px 0;"></p>
 
     <div class="chat-box" id="chatBox">
       <p class="muted">جاري تحميل المحادثة...</p>
     </div>
 
-    <div class="row">
+    <div class="row" style="margin-top: 12px;">
       <input id="messageInput" maxlength="5000"
-             placeholder="اكتب رسالتك..."
+             placeholder="اكتب رسالتك الخاصة..."
              onkeydown="if(event.key==='Enter')sendMessage()">
       <button onclick="sendMessage()">إرسال</button>
     </div>
@@ -131,9 +232,9 @@ hr{border:0;border-top:1px solid #444;margin:15px 0}
 
 <!-- ديوان الوزارات -->
 <section class="section">
-  <h2>ديوان الوزارات</h2>
+  <h2>ديوان الوزارات والمصالح</h2>
   <p class="muted">
-    هذه مساحة مشتركة لرسائل المواطنين إلى الديوان.
+    مساحة مرئية مشتركة لتقديم العرائض والرسائل للديوان والوزارات المعنية.
   </p>
 
   <select id="ministrySelect">
@@ -144,13 +245,14 @@ hr{border:0;border-top:1px solid #444;margin:15px 0}
     <option value="finance">وزارة المالية</option>
   </select>
 
-  <div class="chat-box" id="ministryBox"></div>
+  <div class="chat-box" id="ministryBox" style="margin-top: 12px;"></div>
 
-  <input id="ministryInput" maxlength="5000"
-         placeholder="اكتب رسالتك إلى الديوان..."
-         onkeydown="if(event.key==='Enter')sendMinistryAction()">
-
-  <button onclick="sendMinistryAction()">إرسال إلى الديوان</button>
+  <div class="row" style="margin-top: 12px;">
+    <input id="ministryInput" maxlength="5000"
+           placeholder="اكتب رسالتك الرسمية إلى الديوان..."
+           onkeydown="if(event.key==='Enter')sendMinistryAction()">
+    <button onclick="sendMinistryAction()">إرسال للديوان</button>
+  </div>
 </section>
 
 </div>
@@ -159,34 +261,16 @@ hr{border:0;border-top:1px solid #444;margin:15px 0}
 <script>
 "use strict";
 
-// ======================================
-// إعداد Supabase
-// ======================================
+const SUPABASE_URL = 'https://trtaoqezskrtswcsboyi.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_oN7eayfaJ9NnF82IIIDqxw_5TfJ5ph1';
 
-const SUPABASE_URL =
-'https://trtaoqezskrtswcsboyi.supabase.co';
-
-const SUPABASE_KEY =
-'sb_publishable_oN7eayfaJ9NnF82IIIDqxw_5TfJ5ph1';
-
-const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
-// ======================================
-// بيانات المستخدم
-// ======================================
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser = null;
 let currentUsername = null;
 let selectedCitizen = null;
-
 let privateChannel = null;
 let ministryChannel = null;
-
-let lastPrivateMessageId = null;
-let lastMinistryMessageId = null;
 
 const $ = id => document.getElementById(id);
 
@@ -201,25 +285,19 @@ function safeText(element, value) {
 
 function formatDate(value) {
   return new Date(value).toLocaleString("ar-EG", {
-    dateStyle:"short",
-    timeStyle:"short"
+    dateStyle: "short",
+    timeStyle: "short"
   });
 }
-
-// ======================================
-// تشغيل المنصة
-// ======================================
 
 window.addEventListener("load", initialize);
 
 async function initialize() {
-  const {data,error} = await db.auth.getSession();
-
+  const {data, error} = await db.auth.getSession();
   if(error) {
-    showError(error,"تعذر فحص تسجيل الدخول");
+    showError(error, "تعذر فحص تسجيل الدخول");
     return;
   }
-
   if(data.session) {
     currentUser = data.session.user;
     await restoreUser();
@@ -227,31 +305,26 @@ async function initialize() {
 }
 
 async function restoreUser() {
-  const {data,error} = await db
+  const {data, error} = await db
     .from("users")
     .select("id,username")
-    .eq("id",currentUser.id)
+    .eq("id", currentUser.id)
     .maybeSingle();
 
   if(error) {
-    showError(error,"تعذر تحميل بيانات المواطن");
+    showError(error, "تعذر تحميل بيانات المواطن");
     return;
   }
 
   if(!data) {
     $("loginSection").classList.remove("hidden");
-    $("loginInfo").textContent =
-      "اكتب اسم المواطن لإكمال تسجيل الدخول.";
+    $("loginInfo").textContent = "أدخل اسمك الكريم لإكمال الدخول للسجلات.";
     return;
   }
 
   currentUsername = data.username;
   await enterPlatform();
 }
-
-// ======================================
-// تسجيل الدخول
-// ======================================
 
 async function handleLogin() {
   const name = $("usernameInput").value.trim();
@@ -270,47 +343,39 @@ async function handleLogin() {
 
   try {
     let sessionResult = await db.auth.getSession();
-
     if(sessionResult.error) throw sessionResult.error;
 
     if(sessionResult.data.session) {
       currentUser = sessionResult.data.session.user;
     } else {
       const result = await db.auth.signInAnonymously();
-
       if(result.error) throw result.error;
-
       currentUser = result.data.user;
     }
 
     const {error} = await db.from("users").upsert({
-      id:currentUser.id,
-      username:name
-    },{onConflict:"id"});
+      id: currentUser.id,
+      username: name
+    }, {onConflict: "id"});
 
     if(error) throw error;
 
     currentUsername = name;
-
     await enterPlatform();
 
   } catch(error) {
-    showError(error,"تعذر تسجيل الدخول. تحقق من إعدادات Supabase.");
+    showError(error, "تعذر تسجيل الدخول. تأكد من إعدادات المصادقة.");
   } finally {
     $("loginButton").disabled = false;
   }
 }
 
-// ======================================
-// دخول لوحة المواطن
-// ======================================
-
 async function enterPlatform() {
   $("loginSection").classList.add("hidden");
   $("mainApp").classList.remove("hidden");
 
-  safeText($("userStatus"),"مرحباً بك يا " + currentUsername);
-  safeText($("userIdDisplay"),currentUser.id);
+  safeText($("userStatus"), "مرحباً بك في الديوان، يا " + currentUsername);
+  safeText($("userIdDisplay"), currentUser.id);
 
   await refreshCitizens();
   await loadMinistryMessages();
@@ -318,25 +383,20 @@ async function enterPlatform() {
   subscribeMinistryMessages();
 }
 
-// ======================================
-// قائمة المواطنين
-// ======================================
-
 async function refreshCitizens() {
   if(!currentUser) return;
 
   const select = $("citizenSelect");
-
   const oldValue = selectedCitizen;
 
-  const {data,error} = await db
+  const {data, error} = await db
     .from("users")
     .select("id,username")
-    .neq("id",currentUser.id)
+    .neq("id", currentUser.id)
     .order("username");
 
   if(error) {
-    showError(error,"تعذر تحميل قائمة المواطنين");
+    showError(error, "تعذر تحميل قائمة المواطنين");
     return;
   }
 
@@ -362,10 +422,6 @@ async function refreshCitizens() {
   }
 }
 
-// ======================================
-// اختيار محادثة خاصة
-// ======================================
-
 async function changeConversation() {
   selectedCitizen = $("citizenSelect").value || null;
 
@@ -374,23 +430,15 @@ async function changeConversation() {
     return;
   }
 
-  const name = $("citizenSelect")
-    .selectedOptions[0].textContent;
-
-  safeText($("conversationTitle"),"محادثة خاصة مع " + name);
-
+  const name = $("citizenSelect").selectedOptions[0].textContent;
+  safeText($("conversationTitle"), "محادثة خاصة مع: " + name);
   $("privateChatArea").classList.remove("hidden");
 
   await loadChatMessages();
 }
 
-// ======================================
-// عرض الرسائل بطريقة آمنة
-// ======================================
-
-function appendMessage(box,message,isMine) {
+function appendMessage(box, message, isMine) {
   const item = document.createElement("div");
-
   item.className = "msg " + (isMine ? "mine" : "other");
 
   const sender = document.createElement("b");
@@ -398,6 +446,7 @@ function appendMessage(box,message,isMine) {
 
   const content = document.createElement("div");
   content.textContent = message.text;
+  content.style.marginTop = "4px";
 
   const time = document.createElement("small");
   time.textContent = formatDate(message.created_at);
@@ -405,13 +454,8 @@ function appendMessage(box,message,isMine) {
   item.appendChild(sender);
   item.appendChild(content);
   item.appendChild(time);
-
   box.appendChild(item);
 }
-
-// ======================================
-// تحميل المحادثة الخاصة
-// ======================================
 
 async function loadChatMessages() {
   if(!selectedCitizen || !currentUser) return;
@@ -421,22 +465,20 @@ async function loadChatMessages() {
 
   const first = document.createElement("p");
   first.className = "muted";
-  first.textContent = "جاري تحميل الرسائل...";
+  first.textContent = "جاري تحميل سجل الرسائل...";
   box.appendChild(first);
 
   const me = currentUser.id;
   const other = selectedCitizen;
 
-  const {data,error} = await db
+  const {data, error} = await db
     .from("private_messages")
     .select("*")
-    .or(
-      `and(sender_id.eq.${me},receiver_id.eq.${other}),and(sender_id.eq.${other},receiver_id.eq.${me})`
-    )
-    .order("created_at",{ascending:true});
+    .or(`and(sender_id.eq.${me},receiver_id.eq.${other}),and(sender_id.eq.${other},receiver_id.eq.${me})`)
+    .order("created_at", {ascending: true});
 
   if(error) {
-    showError(error,"تعذر تحميل المحادثة");
+    showError(error, "تعذر تحميل المحادثة");
     return;
   }
 
@@ -447,9 +489,7 @@ async function loadChatMessages() {
       box,
       {
         ...message,
-        sender_name: message.sender_id === me
-          ? currentUsername
-          : $("citizenSelect").selectedOptions[0].textContent
+        sender_name: message.sender_id === me ? currentUsername : $("citizenSelect").selectedOptions[0].textContent
       },
       message.sender_id === me
     );
@@ -458,37 +498,20 @@ async function loadChatMessages() {
   if(!data || data.length === 0) {
     const empty = document.createElement("p");
     empty.className = "muted";
-    empty.textContent = "لا توجد رسائل بعد. ابدأ المحادثة الآن!";
+    empty.textContent = "لا توجد رسائل سابقة. ابدأ الحديث الآن!";
     box.appendChild(empty);
   }
-
-  lastPrivateMessageId = data?.length
-    ? data[data.length-1].id
-    : null;
 
   box.scrollTop = box.scrollHeight;
 }
 
-// ======================================
-// إرسال رسالة خاصة
-// ======================================
-
 async function sendMessage() {
-  if(!currentUser) {
-    alert("سجل الدخول أولاً");
-    return;
-  }
-
-  if(!selectedCitizen) {
-    alert("اختر مواطناً أولاً");
-    return;
-  }
+  if(!currentUser || !selectedCitizen) return;
 
   const input = $("messageInput");
   const message = input.value.trim();
 
   if(!message) return;
-
   if(message.length > 5000) {
     alert("الرسالة طويلة جداً");
     return;
@@ -497,130 +520,77 @@ async function sendMessage() {
   input.disabled = true;
 
   try {
-    const {error} = await db
-      .from("private_messages")
-      .insert({
-        sender_id:currentUser.id,
-        receiver_id:selectedCitizen,
-        text:message
-      });
+    const {error} = await db.from("private_messages").insert({
+      sender_id: currentUser.id,
+      receiver_id: selectedCitizen,
+      text: message
+    });
 
     if(error) throw error;
-
     input.value = "";
-
   } catch(error) {
-    showError(error,"تعذر إرسال الرسالة");
+    showError(error, "تعذر إرسال الرسالة");
   } finally {
     input.disabled = false;
     input.focus();
   }
 }
 
-// ======================================
-// استقبال الرسائل الخاصة لحظياً
-// ======================================
-
 function subscribePrivateMessages() {
   if(privateChannel) {
     db.removeChannel(privateChannel);
-    privateChannel = null;
   }
 
-  privateChannel = db
-    .channel("private_messages_" + currentUser.id)
-    .on(
-      "postgres_changes",
-      {
-        event:"INSERT",
-        schema:"public",
-        table:"private_messages"
-      },
-      async payload => {
-        const m = payload.new;
+  privateChannel = db.channel("private_messages_" + currentUser.id)
+    .on("postgres_changes", {event: "INSERT", schema: "public", table: "private_messages"}, async payload => {
+      const m = payload.new;
+      const belongsToMe = m.sender_id === currentUser.id || m.receiver_id === currentUser.id;
+      if(!belongsToMe) return;
 
-        const belongsToMe =
-          m.sender_id === currentUser.id ||
-          m.receiver_id === currentUser.id;
-
-        if(!belongsToMe) return;
-
-        if(
-          selectedCitizen &&
-          (
-            (m.sender_id === currentUser.id &&
-             m.receiver_id === selectedCitizen) ||
-            (m.sender_id === selectedCitizen &&
-             m.receiver_id === currentUser.id)
-          )
-        ) {
-          // إعادة التحميل تمنع تكرار الرسائل
-          await loadChatMessages();
-        }
+      if(selectedCitizen && ((m.sender_id === currentUser.id && m.receiver_id === selectedCitizen) || (m.sender_id === selectedCitizen && m.receiver_id === currentUser.id))) {
+        await loadChatMessages();
       }
-    )
-    .subscribe(status => {
-      console.log("Private chat:",status);
-    });
+    })
+    .subscribe();
 }
-
-// ======================================
-// ديوان الوزارات
-// ======================================
 
 async function loadMinistryMessages() {
   const ministry = $("ministrySelect").value;
   const box = $("ministryBox");
-
   box.replaceChildren();
 
-  const {data,error} = await db
+  const {data, error} = await db
     .from("ministry_messages")
     .select("*")
-    .eq("ministry_id",ministry)
-    .order("created_at",{ascending:true});
+    .eq("ministry_id", ministry)
+    .order("created_at", {ascending: true});
 
   if(error) {
-    showError(error,"تعذر تحميل رسائل الديوان");
+    showError(error, "تعذر تحميل رسائل الديوان");
     return;
   }
 
   for(const m of data || []) {
     appendMessage(
       box,
-      {
-        ...m,
-        sender_name:m.sender_id
-      },
+      {...m, sender_name: m.sender_id},
       m.user_id === currentUser.id
     );
   }
 
-  lastMinistryMessageId = data?.length
-    ? data[data.length-1].id
-    : null;
-
   if(!data || data.length === 0) {
     const empty = document.createElement("p");
     empty.className = "muted";
-    empty.textContent = "لا توجد رسائل في هذا الديوان.";
+    empty.textContent = "لا توجد مراسلات في هذا الديوان بعد.";
     box.appendChild(empty);
   }
 
   box.scrollTop = box.scrollHeight;
 }
 
-// ======================================
-// تغيير الوزارة
-// ======================================
-
-$("ministrySelect").addEventListener("change",async () => {
+$("ministrySelect").addEventListener("change", async () => {
   await loadMinistryMessages();
 });
-
-// ======================================
-// إرسال رسالة للوزارة
-// ======================================
 
 async function sendMinistryAction() {
   if(!currentUser) {
@@ -633,64 +603,39 @@ async function sendMinistryAction() {
   const ministry = $("ministrySelect").value;
 
   if(!message) return;
-
   input.disabled = true;
 
   try {
-    const {error} = await db
-      .from("ministry_messages")
-      .insert({
-        ministry_id:ministry,
-        user_id:currentUser.id,
-        sender_id:currentUsername,
-        text:message
-      });
+    const {error} = await db.from("ministry_messages").insert({
+      ministry_id: ministry,
+      user_id: currentUser.id,
+      sender_id: currentUsername,
+      text: message
+    });
 
     if(error) throw error;
-
     input.value = "";
-
   } catch(error) {
-    showError(error,"تعذر إرسال رسالة الوزارة");
+    showError(error, "تعذر إرسال الرسالة إلى الديوان");
   } finally {
     input.disabled = false;
     input.focus();
   }
 }
 
-// ======================================
-// استقبال رسائل الوزارات لحظياً
-// ======================================
-
 function subscribeMinistryMessages() {
   if(ministryChannel) {
     db.removeChannel(ministryChannel);
-    ministryChannel = null;
   }
 
-  ministryChannel = db
-    .channel("ministry_messages_" + currentUser.id)
-    .on(
-      "postgres_changes",
-      {
-        event:"INSERT",
-        schema:"public",
-        table:"ministry_messages"
-      },
-      async payload => {
-        if(
-          payload.new.ministry_id ===
-          $("ministrySelect").value
-        ) {
-          await loadMinistryMessages();
-        }
+  ministryChannel = db.channel("ministry_messages_" + currentUser.id)
+    .on("postgres_changes", {event: "INSERT", schema: "public", table: "ministry_messages"}, async payload => {
+      if(payload.new.ministry_id === $("ministrySelect").value) {
+        await loadMinistryMessages();
       }
-    )
-    .subscribe(status => {
-      console.log("Ministry channel:",status);
-    });
+    })
+    .subscribe();
 }
-
 </script>
 </body>
 </html>
